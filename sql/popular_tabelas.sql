@@ -109,6 +109,6 @@ VALUES (
     '2025-11-16 13:00:00',
     'Elaborei em conjunto a Gustavo Pereira o contrato de trabalho, indicando os principais campos necessários.',
     'O Senhor Gustavo Pereira pediu ajuda para emitir o contrato de um empregado.',
-    'Finalizado',
+    'Fechado',
     'Atendimento Presencial'
 );

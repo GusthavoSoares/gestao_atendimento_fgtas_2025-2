@@ -1,6 +1,7 @@
 import errors from 'http-errors'
 import express from 'express'
 import atendimentoRoutes from './routes/atendimentoRoutes.js'
+import tipoSolicitanteRoutes from './routes/tipoSolicitanteRoutes.js'
 
 const PORTA = 8001
 const HOSTNAME = 'localhost'
@@ -18,8 +19,10 @@ app.get("/", (req, res, next) => {
     })
 })
 
-
+//Rotas
 app.use('/atendimentos', atendimentoRoutes)
+app.use('/tiposSolicitantes', tipoSolicitanteRoutes)
+
 
 app.use((req, res, next) => next(errors(404)))
 

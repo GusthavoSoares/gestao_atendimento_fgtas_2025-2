@@ -48,6 +48,23 @@ export class AtendimentoController {
     static async listar(req, res, next) {
         try {
             const dados = await conexao('atendimento')
+            .select('atendimento.id',
+                'u.nome AS nome_atendente',
+                'tu.tipo AS cargo_atendente',
+                'sol.nome AS nome_solicitante',
+                'ts.tipo AS tipo_solicitante',
+                'p.nome AS portfolio',
+                'serv.nome AS servico',
+                'sol.identificacao',
+                'sol.telefone',
+                'sol.cep',
+                'atendimento.arquivos_caminho',
+                 'atendimento.data_inicio',
+                 'atendimento.data_fim', 
+                 'atendimento.solucao', 
+                 'atendimento.descricao', 
+                 'atendimento.status', 
+                 'atendimento.canal')
                 .innerJoin("solicitante AS sol", "sol.id", "=", "atendimento.id_solicitante")
                 .innerJoin("tipo_solicitante AS ts", "ts.id", "=", "sol.id_tipo_solicitante")
                 .innerJoin("usuario AS u", "u.id", '=', 'atendimento.id_atendente')
@@ -65,7 +82,8 @@ export class AtendimentoController {
                     'sol.identificacao',
                     'sol.telefone',
                     'sol.cep',
-                    'atendimento.arquivos_caminho', 'atendimento.data_inicio', 'atendimento.data_fim', 'atendimento.solucao', 'atendimento.descricao', 'atendimento.status', 'atendimento.canal').orderBy("atendimento.id", "desc")
+                    'atendimento.arquivos_caminho', 'atendimento.data_inicio', 'atendimento.data_fim', 'atendimento.solucao', 'atendimento.descricao', 'atendimento.status', 'atendimento.canal')
+                    .orderBy("atendimento.id", "desc")
             res.status(200).json(dados)
         } catch (error) {
             next(error);
@@ -76,7 +94,32 @@ export class AtendimentoController {
     static async listarAbertos(req, res, next) {
         try {
             const dados = await conexao('atendimento')
-                .select('*')
+            .select('atendimento.id',
+                'u.nome AS nome_atendente',
+                'tu.tipo AS cargo_atendente',
+                'sol.nome AS nome_solicitante',
+                'ts.tipo AS tipo_solicitante',
+                'p.nome AS portfolio',
+                'serv.nome AS servico',
+                'sol.identificacao',
+                'sol.telefone',
+                'sol.cep',
+                'atendimento.arquivos_caminho',
+                 'atendimento.data_inicio',
+                 'atendimento.data_fim', 
+                 'atendimento.solucao', 
+                 'atendimento.descricao', 
+                 'atendimento.status', 
+                 'atendimento.canal')
+                .innerJoin("solicitante AS sol", "sol.id", "=", "atendimento.id_solicitante")
+                .innerJoin("tipo_solicitante AS ts", "ts.id", "=", "sol.id_tipo_solicitante")
+                .innerJoin("usuario AS u", "u.id", '=', 'atendimento.id_atendente')
+                .innerJoin("tipo_usuario AS tu", "tu.id", "=", "u.id_tipo_usuario")
+                .innerJoin("servico AS serv", "serv.id", "=", "atendimento.id_servico")
+                .innerJoin("portfolio AS p", "p.id", "=", "atendimento.id_portfolio")
+                .innerJoin("tipo_ocorrencia AS to", "to.id", "=", "atendimento.id_tipo_ocorrencia")
+                .where('atendimento.status','=', 'Em Andamento')
+                .orderBy("atendimento.id", "desc")
 
             res.json(dados)
         } catch (error) {
@@ -87,7 +130,32 @@ export class AtendimentoController {
     static async listarFechados(req, res, next) {
         try {
             const dados = await conexao('atendimento')
-                .select('*')
+            .select('atendimento.id',
+                'u.nome AS nome_atendente',
+                'tu.tipo AS cargo_atendente',
+                'sol.nome AS nome_solicitante',
+                'ts.tipo AS tipo_solicitante',
+                'p.nome AS portfolio',
+                'serv.nome AS servico',
+                'sol.identificacao',
+                'sol.telefone',
+                'sol.cep',
+                'atendimento.arquivos_caminho',
+                 'atendimento.data_inicio',
+                 'atendimento.data_fim', 
+                 'atendimento.solucao', 
+                 'atendimento.descricao', 
+                 'atendimento.status', 
+                 'atendimento.canal')
+                .innerJoin("solicitante AS sol", "sol.id", "=", "atendimento.id_solicitante")
+                .innerJoin("tipo_solicitante AS ts", "ts.id", "=", "sol.id_tipo_solicitante")
+                .innerJoin("usuario AS u", "u.id", '=', 'atendimento.id_atendente')
+                .innerJoin("tipo_usuario AS tu", "tu.id", "=", "u.id_tipo_usuario")
+                .innerJoin("servico AS serv", "serv.id", "=", "atendimento.id_servico")
+                .innerJoin("portfolio AS p", "p.id", "=", "atendimento.id_portfolio")
+                .innerJoin("tipo_ocorrencia AS to", "to.id", "=", "atendimento.id_tipo_ocorrencia")
+                     .where('atendimento.status','=', 'Fechado')
+                    .orderBy("atendimento.id", "desc")
 
             res.json(dados)
         } catch (error) {
@@ -135,9 +203,9 @@ export class AtendimentoController {
 
             await conexao('atendimento')
                 .where({ id })
-                .update({ status: 'INATIVO' });
+                .update({ status: 'Finalizado' });
 
-            res.json({ message: 'Atendimento inativado com sucesso' });
+            res.json({ message: 'Atendimento finalizado com sucesso' });
         } catch (error) {
             next(error);
         }
