@@ -3,7 +3,7 @@ export class Servico {
     #nome
     #status
 
-    constructor(idPortfolio, nome, status = 'ATIVO') {
+    constructor(idPortfolio, nome, status) {
         this.#idPortfolio = idPortfolio
         this.#nome = nome
         this.#status = status

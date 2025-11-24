@@ -1,7 +1,14 @@
 import errors from 'http-errors'
 import express from 'express'
 import atendimentoRoutes from './routes/atendimentoRoutes.js'
+import portfolioRoutes from './routes/portfolioRoutes.js'
+import servicoRoutes from './routes/servicoRoutes.js'
+import solicitanteRoutes from './routes/solicitanteRoutes.js'
+import tipoOcorrenciaRoutes from './routes/tipoOcorrenciaRoutes.js'
 import tipoSolicitanteRoutes from './routes/tipoSolicitanteRoutes.js'
+import tipoUsuarioRoutes from './routes/tipoUsuarioRoutes.js'
+import usuarioRoutes from './routes/usuarioRoutes.js'
+
 
 const PORTA = 8001
 const HOSTNAME = 'localhost'
@@ -21,7 +28,14 @@ app.get("/", (req, res, next) => {
 
 //Rotas
 app.use('/atendimentos', atendimentoRoutes)
+app.use('/portfolios', portfolioRoutes)
+app.use('/servicos', servicoRoutes)
+app.use('/solicitantes', solicitanteRoutes)
+app.use('/tiposOcorrencias', tipoOcorrenciaRoutes)
 app.use('/tiposSolicitantes', tipoSolicitanteRoutes)
+app.use('/tiposUsuarios', tipoUsuarioRoutes)
+app.use('/usuarios', usuarioRoutes)
+
 
 
 app.use((req, res, next) => next(errors(404)))

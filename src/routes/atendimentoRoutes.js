@@ -6,6 +6,7 @@ const router = Router()
 
 router.post('/', AtendimentoController.criar)
 router.get('/', AtendimentoController.listar)
+router.get('/finalizados', AtendimentoController.listarFinalizados)
 router.get('/:id', AtendimentoController.buscarPorId)
 router.put("/:id", AtendimentoController.atualizar)
 router.delete("/:id", AtendimentoController.deletar)

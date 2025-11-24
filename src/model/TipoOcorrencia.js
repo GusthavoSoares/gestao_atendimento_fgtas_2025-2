@@ -1,21 +1,21 @@
 export class TipoOcorrencia {
-    #nome
+    #tipo
 
-    constructor(nome) {
-        this.#nome = nome
+    constructor(tipo) {
+        this.#tipo = tipo
     }
 
-    get nome() {
-        return this.#nome
+    get tipo() {
+        return this.#tipo
     }
 
-    set nome(novoNome) {
-        this.#nome = novoNome
+    set tipo(novoNome) {
+        this.#tipo = novoNome
     }
 
     toJSON() {
         return {
-            nome: this.#nome
+            tipo: this.#tipo
         }
     }
 }

@@ -6,6 +6,7 @@ const router = Router()
 
 router.post('/', TipoSolicitanteController.criar)
 router.get('/', TipoSolicitanteController.listar)
+router.get("/inativos", TipoSolicitanteController.listarInativos)
 router.get('/:id', TipoSolicitanteController.buscarPorId)
 router.put("/:id", TipoSolicitanteController.atualizar)
 router.delete("/:id", TipoSolicitanteController.deletar)
