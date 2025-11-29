@@ -1,27 +1,30 @@
 export class Usuario {
-    #idTipoUsuario;
-    #nome;
-    #cpf;
-    #dataNascimento;
-    #telefone;
-    #cep;
-    #endereco;
-    #email;
-    #status;
+    #idTipoUsuario
+    #nome
+    #cpf
+    #dataNascimento
+    #telefone
+    #cep
+    #endereco
+    #email
+    #status
+    #senha
 
     constructor(
         idTipoUsuario,
         nome,
+        senha,
         cpf,
         dataNascimento,
         telefone,
         cep,
         endereco,
         email,
-        status = "ATIVO"
+        status,
     ) {
         this.#idTipoUsuario = idTipoUsuario
         this.#nome = nome
+        this.#senha = senha
         this.#cpf = cpf
         this.#dataNascimento = dataNascimento
         this.#telefone = telefone
@@ -40,24 +43,31 @@ export class Usuario {
     get cpf() { return this.#cpf }
     set cpf(v) { this.#cpf = v }
 
-    get dataNascimento() { return this.#dataNascimento; }
+    get dataNascimento() { return this.#dataNascimento }
     set dataNascimento(v) { this.#dataNascimento = v }
 
-    get telefone() { return this.#telefone; }
-    set telefone(v) { this.#telefone = v; }
+    get telefone() { return this.#telefone }
+    set telefone(v) { this.#telefone = v }
 
-    get cep() { return this.#cep; }
-    set cep(v) { this.#cep = v; }
+    get cep() { return this.#cep }
+    set cep(v) { this.#cep = v }
 
-    get endereco() { return this.#endereco; }
-    set endereco(v) { this.#endereco = v; }
+    get endereco() { return this.#endereco }
+    set endereco(v) { this.#endereco = v }
 
-    get email() { return this.#email; }
-    set email(v) { this.#email = v; }
+    get email() { return this.#email }
+    set email(v) { this.#email = v }
 
-    get status() { return this.#status; }
-    set status(v) { this.#status = v; }
+    get status() { return this.#status }
+    set status(v) { this.#status = v }
 
+    get senha() {
+        return this.#senha
+    }
+
+    set senha(novaSenha) {
+        this.#senha = novaSenha
+    }
 
     validarCPF() {
         const cpf = (this.#cpf || "").replace(/\D/g, "");
@@ -87,6 +97,7 @@ export class Usuario {
         return {
             id_tipo_usuario: this.#idTipoUsuario,
             nome: this.#nome,
+            senha: this.#senha,
             cpf: this.#cpf,
             data_nascimento: this.#dataNascimento,
             telefone: this.#telefone,

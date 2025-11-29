@@ -16,6 +16,7 @@ INSERT INTO
     usuario (
         id_tipo_usuario,
         nome,
+        senha,
         cpf,
         data_nascimento,
         telefone,
@@ -27,6 +28,7 @@ INSERT INTO
 VALUES (
         1,
         'Gusthavo Soares',
+        '$2b$12$KJfidQik7mmlLfpaOgCgCOu7OZhAZo22GmOpZTO7gWgrdWiq/6jWe',
         '05883633080',
         '2005-02-28',
         '51993419188',
@@ -38,6 +40,7 @@ VALUES (
     (
         2,
         'Mário Costa',
+        '$2b$12$.RfY5Yh1.16cq2u5aCSILu5EOhyudMJhjxO9.LhxJPOptBfblsipS',
         '16158137723',
         '1999-01-12',
         '5128340166',
@@ -49,6 +52,7 @@ VALUES (
     (
         3,
         'Ana Maria',
+        '$2b$12$NCXZJt8jKI0SewUnqPjpguNTPwNQWFSO/gTMBScFRB9995UruEz3e',
         '88711415711',
         '2004-11-16',
         '5539338645',
@@ -60,6 +64,7 @@ VALUES (
     (
         3,
         'Ana Braga',
+        '$2b$12$GC/46QwPDf8XVrGfU5CuCOAwfAqFfaLVV2wY6u9aBaSVhowshYckO',
         '88711315711',
         '2001-11-16',
         '5532338645',

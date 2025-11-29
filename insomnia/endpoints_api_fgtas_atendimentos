@@ -1240,7 +1240,7 @@ collection:
         meta:
           id: req_0f9198a36a5f4e0f83051b6491ada0a7
           created: 1763920212665
-          modified: 1763920810235
+          modified: 1764453859259
           isPrivate: false
           description: ""
           sortKey: -1763920212665
@@ -1251,6 +1251,7 @@ collection:
             {
             "id_tipo_usuario":2,
             "nome":"Teste",
+            "senha":"#Gusthavo28",
             "cpf":"05883633080",
             "data_nascimento":"2004-01-01",
             "telefone":"54234241",
@@ -1279,14 +1280,16 @@ collection:
         meta:
           id: req_ea46eb2a3d1d4486ad9db6aed220289e
           created: 1763920974257
-          modified: 1763921046335
+          modified: 1764454422825
           isPrivate: false
           description: ""
           sortKey: -1763920212765
         method: PUT
         body:
           mimeType: application/json
-          text: '{"cpf":"05883633080"}'
+          text: |-
+            {"cpf":"05883633080",
+            "senha":"#Teste14"}
         headers:
           - name: Content-Type
             value: application/json

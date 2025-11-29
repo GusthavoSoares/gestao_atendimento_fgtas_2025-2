@@ -12,6 +12,7 @@ CREATE TABLE usuario (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_tipo_usuario INT,
     nome VARCHAR(100),
+    senha VARCHAR(255),
     cpf VARCHAR(11),
     data_nascimento DATE,
     telefone VARCHAR(40),
