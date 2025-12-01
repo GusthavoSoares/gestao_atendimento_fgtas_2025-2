@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FGTAS - Gerenciar Serviços</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/df85906e6a.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
+</head>
+
+<body class="with-sidebar">
+    <div id="sidebar-container"></div>
+
+    <div class="container-fluid py-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="fas fa-cogs"></i> Gerenciamento de Serviços</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalServico">
+                        <i class="fas fa-plus"></i> Novo Serviço
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Serviços Ativos</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3" id="filtrosContainer">
+                            <div class="col-md-3">
+                                <label for="filtroStatus" class="form-label">Filtrar por Status</label>
+                                <select id="filtroStatus" class="form-select">
+                                    <option value="todos">Todos</option>
+                                    <option value="Ativo">Ativo</option>
+                                    <option value="Inativo">Inativo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filtroPortfolio" class="form-label">Filtrar por Portfólio</label>
+                                <select id="filtroPortfolio" class="form-select">
+                                    <option value="todos">Todos</option>
+                                </select>
+                            </div>
+                            <div id="botoesFiltroContainer"></div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Portfólio</th>
+                                        <th>Status</th>
+                                        <th width="150">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaServicos">
+                                    <tr>
+                                        <td colspan="5" class="text-center">Carregando...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalServico" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalServicoTitulo">Novo Serviço</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalServicoMensagem" class="alert d-none" role="alert"></div>
+                    <form id="formServico">
+                        <input type="hidden" id="servicoId">
+
+                        <div class="mb-3">
+                            <label for="nomeServico" class="form-label">Nome do Serviço</label>
+                            <input type="text" class="form-control" id="nomeServico" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="portfolioServico" class="form-label">Portfólio</label>
+                            <select class="form-select" id="portfolioServico" required>
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="statusServico" class="form-label">Status</label>
+                            <select class="form-select" id="statusServico" required>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnSalvarServico">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/middleware/UIMiddleware.js"></script>
+    <script src="../js/middleware/AuthMiddleware.js"></script>
+    <script src="../js/classes/Auth.js"></script>
+    <script src="../js/classes/SidebarNavegacao.js"></script>
+    <script src="../js/classes/DashboardUtils.js"></script>
+    <script src="../js/classes/PermissaoAdmin.js"></script>
+    <script src="../js/classes/Inicializador.js"></script>
+    <script src="../js/services/HttpService.js"></script>
+    <script src="../js/services/NotificationService.js"></script>
+    <script src="../js/services/DateService.js"></script>
+    <script src="../js/services/ValidationService.js"></script>
+    <script src="../js/filters/FiltroController.js"></script>
+    <script src="../js/renders/FiltroRender.js"></script>
+    <script src="../js/renders/BotoesFiltroRender.js"></script>
+    <script src="../js/modals/ModalServico.js"></script>
+    <script src="../js/renders/ServicoRender.js"></script>
+    <script src="../js/frontController/ServicoFrontController.js"></script>
+    <script>
+        Inicializador.inicializar({ requerAdmin: true })
+    </script>
+</body>
+
+</html>

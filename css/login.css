@@ -1,0 +1,218 @@
+﻿@import url('variables.css');
+
+html,
+body {
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.card {
+    border-radius: var(--radius-xl);
+    border: none;
+    animation: slideIn var(--transition-base) ease-out;
+}
+
+.input-group-text {
+    border-color: #e0e0e0 !important;
+}
+
+.input-group-text i {
+    color: var(--primary-color);
+}
+
+.form-control {
+    border-color: var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    transition: all var(--transition-base);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25) !important;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-weight: var(--font-semibold);
+    transition: all var(--transition-base);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-outline-secondary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: var(--radius-md);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-label {
+    font-weight: var(--font-medium);
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    font-size: var(--font-sm);
+}
+
+.form-text {
+    color: var(--text-secondary);
+    font-size: var(--font-xs);
+}
+
+.link-primary {
+    color: var(--primary-color) !important;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.link-primary:hover {
+    color: var(--primary-dark) !important;
+    text-decoration: underline;
+}
+
+.card-header {
+    background: var(--gradient-primary) !important;
+    border: none;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
+}
+
+.card-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+
+.alert {
+    border: none;
+    border-radius: var(--radius-md);
+    animation: slideIn var(--transition-base) ease-out;
+}
+
+.alert-danger {
+    background-color: var(--danger-light);
+    color: var(--danger-dark);
+    border-left: 4px solid var(--danger-color);
+}
+
+.alert-success {
+    background-color: var(--success-light);
+    color: var(--success-dark);
+    border-left: 4px solid var(--success-color);
+}
+
+.alert-info {
+    background-color: var(--info-light);
+    color: var(--info-dark);
+    border-left: 4px solid var(--info-color);
+}
+
+.btn-close {
+    filter: invert(0.5);
+}
+
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.success-icon {
+    font-size: 48px;
+    animation: scaleIn 0.5s ease-out;
+}
+
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+.info-badge {
+    background: var(--gray-50);
+    padding: 12px;
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--primary-color);
+}
+
+
+@media (max-width: 768px) {
+    .card {
+        max-width: 90% !important;
+        margin: 20px auto;
+    }
+
+    .card-body {
+        padding: 2rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-control {
+        font-size: 16px;
+
+    }
+
+    .btn-primary {
+        padding: 12px 15px;
+    }
+
+    .card {
+        margin: 15px 10px;
+    }
+
+    .card-body {
+        padding: 1.5rem !important;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    img[alt="FGTAS"] {
+        max-width: 120px !important;
+    }
+}

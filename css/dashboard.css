@@ -1,0 +1,64 @@
+﻿@import url('variables.css');
+
+.navbar-custom {
+    background: var(--gradient-primary);
+}
+
+.card-custom {
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.card-custom:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.loading {
+    display: none;
+    min-height: 400px;
+}
+
+.loading.ativo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-badge {
+    background: var(--gray-50);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-sm);
+}
+
+
+@media (max-width: 768px) {
+    .card-custom {
+        margin-bottom: 1rem;
+    }
+
+    .info-badge {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .container-fluid {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-title {
+        font-size: 0.95rem;
+    }
+
+    .card-text {
+        font-size: 0.85rem;
+    }
+
+    .btn-sm {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}

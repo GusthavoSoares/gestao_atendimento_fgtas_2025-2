@@ -1,4 +1,4 @@
-export class Atendimento {
+﻿export class Atendimento {
     #idSolicitante
     #idAtendente
     #idPortfolio
@@ -11,8 +11,6 @@ export class Atendimento {
     #descricao
     #status
     #canal
-
-
     constructor(
         idSolicitante,
         idAtendente,
@@ -39,46 +37,31 @@ export class Atendimento {
         this.#descricao = descricao
         this.#status = status
         this.#canal = canal
-
     }
-
     get idSolicitante() { return this.#idSolicitante; }
     set idSolicitante(v) { this.#idSolicitante = v; }
-
     get idAtendente() { return this.#idAtendente; }
     set idAtendente(v) { this.#idAtendente = v; }
-
     get idPortfolio() { return this.#idPortfolio; }
     set idPortfolio(v) { this.#idPortfolio = v; }
-
     get idServico() { return this.#idServico; }
     set idServico(v) { this.#idServico = v; }
-
     get idTipoOcorrencia() { return this.#idTipoOcorrencia; }
     set idTipoOcorrencia(v) { this.#idTipoOcorrencia = v; }
-
     get arquivosCaminho() { return this.#arquivosCaminho; }
     set arquivosCaminho(v) { this.#arquivosCaminho = v; }
-
     get dataInicio() { return this.#dataInicio; }
     set dataInicio(v) { this.#dataInicio = v; }
-
     get dataFim() { return this.#dataFim; }
     set dataFim(v) { this.#dataFim = v; }
-
     get solucao() { return this.#solucao; }
     set solucao(v) { this.#solucao = v; }
-
     get descricao() { return this.#descricao; }
     set descricao(v) { this.#descricao = v; }
-
     get status() { return this.#status; }
     set status(v) { this.#status = v; }
-
     get canal() { return this.#canal; }
     set canal(v) { this.#canal = v; }
-
-
     toJSON() {
         return {
             id_solicitante: this.#idSolicitante,

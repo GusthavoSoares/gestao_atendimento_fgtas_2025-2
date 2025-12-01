@@ -1,5 +1,4 @@
-import knex from 'knex';
-
+﻿import knex from 'knex';
 const configuracao = {
     client: 'mysql',
     connection: {
@@ -9,7 +8,5 @@ const configuracao = {
         database: 'fgtas_atendimentos'
     }
 }
-
 const conexao = knex(configuracao)
-
 export default conexao;

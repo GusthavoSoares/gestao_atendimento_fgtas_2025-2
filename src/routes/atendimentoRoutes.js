@@ -1,14 +1,10 @@
-import { Router } from 'express'
-
+﻿import { Router } from 'express'
 import { AtendimentoController } from '../controller/AtendimentoController.js'
-
+import ValidadorAutenticacao from '../middleware/autenticacao.js'
 const router = Router()
-
-router.post('/', AtendimentoController.criar)
-router.get('/', AtendimentoController.listar)
-router.get('/finalizados', AtendimentoController.listarFinalizados)
-router.get('/:id', AtendimentoController.buscarPorId)
-router.put("/:id", AtendimentoController.atualizar)
-router.delete("/:id", AtendimentoController.deletar)
-
+router.post('/', ValidadorAutenticacao.validarToken, AtendimentoController.criar)
+router.get('/', ValidadorAutenticacao.validarToken, AtendimentoController.listar)
+router.get('/:id', ValidadorAutenticacao.validarToken, AtendimentoController.buscarPorId)
+router.put("/:id", ValidadorAutenticacao.validarToken, AtendimentoController.atualizar)
+router.delete("/:id", ValidadorAutenticacao.validarToken, AtendimentoController.deletar)
 export default router

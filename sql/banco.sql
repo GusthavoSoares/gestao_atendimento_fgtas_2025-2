@@ -10,18 +10,22 @@ CREATE TABLE tipo_usuario (
 
 CREATE TABLE usuario (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    id_tipo_usuario INT,
-    nome VARCHAR(100),
-    senha VARCHAR(255),
-    cpf VARCHAR(11),
+    id_tipo_usuario INT NOT NULL,
+    nome VARCHAR(255) NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    cpf VARCHAR(11) UNIQUE NOT NULL,
     data_nascimento DATE,
-    telefone VARCHAR(40),
+    telefone VARCHAR(20),
     cep VARCHAR(8),
-    endereco VARCHAR(255),
-    email VARCHAR(50),
-    status VARCHAR(7) DEFAULT 'Ativo',
-    INDEX idx_usuario_id_tipo_usuario (id_tipo_usuario),
-    INDEX idx_usuario_cpf (cpf)
+    endereco TEXT,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    status VARCHAR(50) DEFAULT 'Ativo',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_cpf (cpf),
+    INDEX idx_status (status),
+    FOREIGN KEY (id_tipo_usuario) REFERENCES tipo_usuario (id)
 );
 
 CREATE TABLE tipo_solicitante (
@@ -88,9 +92,6 @@ CREATE TABLE atendimento (
     INDEX idx_atendimento_data_inicio (data_inicio),
     INDEX idx_atendimento_status (status)
 );
-
-ALTER TABLE usuario
-ADD CONSTRAINT fk_usuario_id_tipo_usuario FOREIGN KEY (id_tipo_usuario) REFERENCES tipo_usuario (id);
 
 ALTER TABLE solicitante
 ADD CONSTRAINT fk_solicitante_id_tipo_solicitante FOREIGN KEY (id_tipo_solicitante) REFERENCES tipo_solicitante (id);

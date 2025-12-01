@@ -1,14 +1,10 @@
-import { Router } from 'express'
-
+﻿import { Router } from 'express'
 import { TipoSolicitanteController } from '../controller/TipoSolicitanteController.js'
-
+import ValidadorAutenticacao from '../middleware/autenticacao.js'
 const router = Router()
-
-router.post('/', TipoSolicitanteController.criar)
-router.get('/', TipoSolicitanteController.listar)
-router.get("/inativos", TipoSolicitanteController.listarInativos)
-router.get('/:id', TipoSolicitanteController.buscarPorId)
-router.put("/:id", TipoSolicitanteController.atualizar)
-router.delete("/:id", TipoSolicitanteController.deletar)
-
+router.post('/', ValidadorAutenticacao.validarToken, TipoSolicitanteController.criar)
+router.get('/', ValidadorAutenticacao.validarToken, TipoSolicitanteController.listar)
+router.get('/:id', ValidadorAutenticacao.validarToken, TipoSolicitanteController.buscarPorId)
+router.put("/:id", ValidadorAutenticacao.validarToken, TipoSolicitanteController.atualizar)
+router.delete("/:id", ValidadorAutenticacao.validarToken, TipoSolicitanteController.deletar)
 export default router

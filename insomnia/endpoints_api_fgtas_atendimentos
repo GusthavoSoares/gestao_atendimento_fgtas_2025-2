@@ -7,1304 +7,1238 @@ meta:
   modified: 1763918650001
   description: ""
 collection:
-  - name: Atendimentos
+  - name: Requisições - Token
     meta:
-      id: fld_00f6f19c208947cd9033bfc19262854b
-      created: 1763918713230
-      modified: 1763918856342
-      sortKey: -1763918713281
+      id: fld_a610e93af74f43f6a398f68f0a8daa41
+      created: 1764513245267
+      modified: 1764541405112
+      sortKey: -1764513245267
       description: ""
     children:
-      - url: "http://localhost:8001/atendimentos  "
-        name: Retornar todos os atendimentos em andamento
+      - name: Atendimentos
         meta:
-          id: req_ffc874ecdb32402a804a0c80ee62795f
-          created: 1763918666790
-          modified: 1763919020764
-          isPrivate: false
+          id: fld_00f6f19c208947cd9033bfc19262854b
+          created: 1763918713230
+          modified: 1764513282432
+          sortKey: -1764513255757
           description: ""
-          sortKey: -1763918719570
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.2
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/atendimentos/1
-        name: Retornar atendimento por ID
+        children:
+          - url: "http://localhost:8001/atendimentos  "
+            name: Retornar todos os atendimentos
+            meta:
+              id: req_ffc874ecdb32402a804a0c80ee62795f
+              created: 1763918666790
+              modified: 1764541362119
+              isPrivate: false
+              description: ""
+              sortKey: -1763918719570
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.6.2
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/atendimentos/1
+            name: Retornar atendimento por ID
+            meta:
+              id: req_ed84b12bc75a4c7bb845d1f74e6da792
+              created: 1763918724855
+              modified: 1763919029371
+              isPrivate: false
+              description: ""
+              sortKey: -1763918719470
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.6.2
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/atendimentos
+            name: Cadastrar Atendimento
+            meta:
+              id: req_39b9a3e0bb4440759dc19970ceaa89e6
+              created: 1763918837236
+              modified: 1763919177811
+              isPrivate: false
+              description: ""
+              sortKey: -1763918719670
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"id_solicitante": 1,
+                	"id_atendente": 3,
+                	"id_portfolio": 2,
+                	"id_servico": 1,
+                	"id_tipo_ocorrencia": 1,
+                	"arquivos_caminho": "",
+                	"data_inicio": "2025-11-16T15:00:00.000Z",
+                	"data_fim": "2025-11-16T16:00:00.000Z",
+                	"solucao": "teste",
+                	"descricao": "teste",
+                	"status": "Em Andamento",
+                	"canal": "Atendimento Presencial"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/atendimentos/2
+            name: Finalizar Atendimento
+            meta:
+              id: req_7b6399f2ce9344aabc302dbe3daca449
+              created: 1763918858832
+              modified: 1763918978929
+              isPrivate: false
+              description: ""
+              sortKey: -1763918719370
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/atendimentos/1
+            name: Atualizar Atendimento
+            meta:
+              id: req_600e1b74f14244ea8c861fba44b97fcb
+              created: 1763918939241
+              modified: 1763919086263
+              isPrivate: false
+              description: ""
+              sortKey: -1763918939241
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "status": "Em Andamento"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Portfólios
         meta:
-          id: req_ed84b12bc75a4c7bb845d1f74e6da792
-          created: 1763918724855
-          modified: 1763919029371
-          isPrivate: false
+          id: fld_7286cb2e0d844ee2905a40448d34b137
+          created: 1763919216854
+          modified: 1764513280336
+          sortKey: -1764513255657
           description: ""
-          sortKey: -1763918719470
-        method: GET
+        children:
+          - url: http://localhost:8001/portfolios
+            name: Retornar todos os portfólios
+            meta:
+              id: req_95d5fa6e030241da9e23425c038f756c
+              created: 1763919328783
+              modified: 1764541354813
+              isPrivate: false
+              description: ""
+              sortKey: -1763919328783
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/portfolios/1
+            name: Retornar portfólio por ID
+            meta:
+              id: req_02ceb1e45ce84cbab05d828b4024a17c
+              created: 1763919726631
+              modified: 1763919741923
+              isPrivate: false
+              description: ""
+              sortKey: -1763919726631
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/portfolios
+            name: Cadastrar Portfólio
+            meta:
+              id: req_51501486ac0c47988026321802a1d5ae
+              created: 1763919748673
+              modified: 1763919864321
+              isPrivate: false
+              description: ""
+              sortKey: -1763919748673
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {"id_tipo_solicitante":1,
+                "nome":"Teste",
+                "status":"Inativo"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/portfolios/1
+            name: Desativar Portfólio
+            meta:
+              id: req_587eda060cd4490cbdff74daa51f63c7
+              created: 1763919898324
+              modified: 1763919958886
+              isPrivate: false
+              description: ""
+              sortKey: -1763919748773
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/portfolios/1
+            name: Atualizar Portfólio
+            meta:
+              id: req_ab01dc46b6e8444e8d6af97192212c91
+              created: 1763919997345
+              modified: 1763920034043
+              isPrivate: false
+              description: ""
+              sortKey: -1763919997345
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "status":"Ativo"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
         headers:
-          - name: User-Agent
-            value: insomnia/11.6.2
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/atendimentos
-        name: Cadastrar Atendimento
-        meta:
-          id: req_39b9a3e0bb4440759dc19970ceaa89e6
-          created: 1763918837236
-          modified: 1763919177811
-          isPrivate: false
-          description: ""
-          sortKey: -1763918719670
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            	"id_solicitante": 1,
-            	"id_atendente": 3,
-            	"id_portfolio": 2,
-            	"id_servico": 1,
-            	"id_tipo_ocorrencia": 1,
-            	"arquivos_caminho": "",
-            	"data_inicio": "2025-11-16T15:00:00.000Z",
-            	"data_fim": "2025-11-16T16:00:00.000Z",
-            	"solucao": "teste",
-            	"descricao": "teste",
-            	"status": "Em Andamento",
-            	"canal": "Atendimento Presencial"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
+          - name: Authorization
+            value: Bearer
+              "eyJpZCI6MSwibm9tZSI6Ikd1c3RoYXZvIFNvYXJlcyIsImVtYWlsIjoiZ3VzdGhhdm9yc29hcmVzQGdtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IkFkbWluaXN0cmFkb3IiLCJ0aW1lc3RhbXAiOjE3NjQ1MTI4NjYxNjZ9"
             description: ""
             disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/atendimentos/2
-        name: Finalizar Atendimento
+      - name: Serviços
         meta:
-          id: req_7b6399f2ce9344aabc302dbe3daca449
-          created: 1763918858832
-          modified: 1763918978929
-          isPrivate: false
+          id: fld_5337941f4b084b39b9669a0e2b61fc85
+          created: 1763919224673
+          modified: 1764513278443
+          sortKey: -1764513255557
           description: ""
-          sortKey: -1763918719370
-        method: DELETE
+        children:
+          - url: http://localhost:8001/servicos
+            name: Retornar serviços
+            meta:
+              id: req_0ec2f133e9704de5bc816979dd0c2048
+              created: 1763955197907
+              modified: 1764541349663
+              isPrivate: false
+              description: ""
+              sortKey: -1763955197907
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "  http://localhost:8001/servicos/18"
+            name: Retornar serviços por id
+            meta:
+              id: req_c2683c158e6e4965a16ea1d718446681
+              created: 1763955222719
+              modified: 1763955370027
+              isPrivate: false
+              description: ""
+              sortKey: -1763955222719
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "  http://localhost:8001/servicos/19"
+            name: Desativar serviço
+            meta:
+              id: req_4c189b7eda45429e92b8b1702b66e9ef
+              created: 1763955234554
+              modified: 1763956328000
+              isPrivate: false
+              description: ""
+              sortKey: -1763955234554
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "  http://localhost:8001/servicos/19"
+            name: Atualizar serviço
+            meta:
+              id: req_3c10d3ae9de0438985a8993ce3c17202
+              created: 1763955244349
+              modified: 1763956311620
+              isPrivate: false
+              description: ""
+              sortKey: -1763955244349
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "status":"Inativo"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/servicos
+            name: Cadastrar serviço
+            meta:
+              id: req_281249b84b4b4c39966767bc495be0e2
+              created: 1763955253488
+              modified: 1763956077656
+              isPrivate: false
+              description: ""
+              sortKey: -1763955253488
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "id_portfolio":2,
+                "nome":"Emissão de nota fiscal"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
         headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
+          - name: Authorization
+            value: Bearer
+              "eyJpZCI6MSwibm9tZSI6Ikd1c3RoYXZvIFNvYXJlcyIsImVtYWlsIjoiZ3VzdGhhdm9yc29hcmVzQGdtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IkFkbWluaXN0cmFkb3IiLCJ0aW1lc3RhbXAiOjE3NjQ1MTI4NjYxNjZ9"
             description: ""
             disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/atendimentos/1
-        name: Atualizar Atendimento
+      - name: Solicitantes
         meta:
-          id: req_600e1b74f14244ea8c861fba44b97fcb
-          created: 1763918939241
-          modified: 1763919086263
-          isPrivate: false
+          id: fld_0b0ac2434782492a8b26dc82b9f397f5
+          created: 1763919241855
+          modified: 1764513276258
+          sortKey: -1764513255457
           description: ""
-          sortKey: -1763918939241
-        method: PUT
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "status": "Em Andamento"
-            }
+        children:
+          - url: http://localhost:8001/solicitantes
+            name: Retornar solicitantes
+            meta:
+              id: req_92f928cb2d4d46d49db763ec4150188c
+              created: 1763954701569
+              modified: 1764541342561
+              isPrivate: false
+              description: ""
+              sortKey: -1763954701569
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/solicitantes/1
+            name: Retornar solicitantes por id
+            meta:
+              id: req_9bd80aca74c049eb85c69526288c53af
+              created: 1763954827090
+              modified: 1763954851217
+              isPrivate: false
+              description: ""
+              sortKey: -1763954827090
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/solicitantes/1
+            name: Desativar solicitante
+            meta:
+              id: req_2a9b89b2cfbe47c482e9bc6faa594ad7
+              created: 1763954858069
+              modified: 1763954871043
+              isPrivate: false
+              description: ""
+              sortKey: -1763954858069
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/solicitantes/1
+            name: Atualizar solicitante
+            meta:
+              id: req_3976d754a9e64b87bb9c6949e06bc4fd
+              created: 1763954883108
+              modified: 1763954928554
+              isPrivate: false
+              description: ""
+              sortKey: -1763954883108
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "status":"Ativo"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/solicitantes
+            name: Cadastrar novo solicitante
+            meta:
+              id: req_857832a5f3744a529f61ba0ede1505ab
+              created: 1763954948834
+              modified: 1763955788626
+              isPrivate: false
+              description: ""
+              sortKey: -1763954948834
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "id_tipo_solicitante":4,
+                "nome":"Maria",
+                "identificacao":"37827448020",
+                "data_nascimento":"1974-08-02",
+                "telefone":"51935607651",
+                "cep":"90870390",
+                "endereco":"Rua Nunes 339",
+                "email":"maria@gmail.com"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
         headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
+          - name: Authorization
+            value: Bearer
+              "eyJpZCI6MSwibm9tZSI6Ikd1c3RoYXZvIFNvYXJlcyIsImVtYWlsIjoiZ3VzdGhhdm9yc29hcmVzQGdtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IkFkbWluaXN0cmFkb3IiLCJ0aW1lc3RhbXAiOjE3NjQ1MTI4NjYxNjZ9"
             description: ""
             disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/atendimentos/finalizados
-        name: Retornar todos os atendimentos finalizados
+      - name: Tipos de Ocorrências
         meta:
-          id: req_63290edd6bf4448e83777ac038d1986f
-          created: 1763918996779
-          modified: 1763919039412
-          isPrivate: false
+          id: fld_0401b37fecbb458497706ea95128a39a
+          created: 1763919261480
+          modified: 1764513274007
+          sortKey: -1764513255357
           description: ""
-          sortKey: -1763918719620
-        method: GET
+        children:
+          - url: http://localhost:8001/tiposOcorrencias/1
+            name: Retornar tipo de ocorrência por id
+            meta:
+              id: req_2863d61e3dc94244aa5915184b5e214f
+              created: 1763954385612
+              modified: 1763954443701
+              isPrivate: false
+              description: ""
+              sortKey: -1763954385612
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposOcorrencias
+            name: Retornar tipos de ocorrências
+            meta:
+              id: req_c6b8e86fda7a42f99822cc13599a3b5e
+              created: 1763954447725
+              modified: 1763954464405
+              isPrivate: false
+              description: ""
+              sortKey: -1763954447725
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposOcorrencias
+            name: Cadastrar novo tipo de ocorrência
+            meta:
+              id: req_042bcb2100e242eca3fc562c1d68f1e9
+              created: 1763954479839
+              modified: 1763954521456
+              isPrivate: false
+              description: ""
+              sortKey: -1763954479839
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "tipo":"Mudança"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposOcorrencias/3
+            name: Deletar tipo de ocorrência
+            meta:
+              id: req_c9f7b13ac99c4cb8beaa5b1954d53507
+              created: 1763954524228
+              modified: 1763954643071
+              isPrivate: false
+              description: ""
+              sortKey: -1763954524228
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposOcorrencias/1
+            name: Atualizar tipo de ocorrência
+            meta:
+              id: req_fa7ef15b87f24716add7db89fcb597db
+              created: 1763954634096
+              modified: 1763954692800
+              isPrivate: false
+              description: ""
+              sortKey: -1763954634096
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "tipo":"Requisição"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
         headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
+          - name: Authorization
+            value: Bearer
+              "eyJpZCI6MSwibm9tZSI6Ikd1c3RoYXZvIFNvYXJlcyIsImVtYWlsIjoiZ3VzdGhhdm9yc29hcmVzQGdtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IkFkbWluaXN0cmFkb3IiLCJ0aW1lc3RhbXAiOjE3NjQ1MTI4NjYxNjZ9"
             description: ""
             disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: Portfólios
-    meta:
-      id: fld_7286cb2e0d844ee2905a40448d34b137
-      created: 1763919216854
-      modified: 1763919216854
-      sortKey: -1763919216854
-      description: ""
-    children:
-      - url: http://localhost:8001/portfolios
-        name: Retornar todos os portfólios ativos
+      - name: Tipos de Solicitantes
         meta:
-          id: req_95d5fa6e030241da9e23425c038f756c
-          created: 1763919328783
-          modified: 1763919902550
-          isPrivate: false
+          id: fld_a62ff2d0a0c7443a9735c6d3ba433591
+          created: 1763919269297
+          modified: 1764541291515
+          sortKey: -1764513255257
           description: ""
-          sortKey: -1763919328783
-        method: GET
+        children:
+          - url: http://localhost:8001/tiposSolicitantes
+            name: Retornar todos os tipos de solicitantes
+            meta:
+              id: req_14b94d036b0f4083bc0032c6d1de34ba
+              created: 1763921545788
+              modified: 1764541334295
+              isPrivate: false
+              description: ""
+              sortKey: -1763921545788
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposSolicitantes
+            name: Cadastrar novo tipo de solicitante
+            meta:
+              id: req_3d7b97626e30491aa3a716d709104322
+              created: 1763921699833
+              modified: 1763921747736
+              isPrivate: false
+              description: ""
+              sortKey: -1763921699833
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "tipo":"Teste",
+                "status":"Inativo"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposSolicitantes/1
+            name: Desativar tipo de solicitante
+            meta:
+              id: req_a5c4ec17f86d48ccb43053412028b624
+              created: 1763921756094
+              modified: 1763921776645
+              isPrivate: false
+              description: ""
+              sortKey: -1763921756094
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposSolicitantes/1
+            name: Atualizar tipo de solicitante
+            meta:
+              id: req_b925a61179a44040a8021bcdd0245f77
+              created: 1763921785199
+              modified: 1763921848324
+              isPrivate: false
+              description: ""
+              sortKey: -1763921785199
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "status":"Ativo"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposSolicitantes/1
+            name: Retornar tipo de solicitante por id
+            meta:
+              id: req_13bb7bfe352d487aaf09d41fa3623791
+              created: 1763921867608
+              modified: 1763921896254
+              isPrivate: false
+              description: ""
+              sortKey: -1763921867608
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
         headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
+          - name: Authorization
+            value: Bearer
+              "eyJpZCI6MSwibm9tZSI6Ikd1c3RoYXZvIFNvYXJlcyIsImVtYWlsIjoiZ3VzdGhhdm9yc29hcmVzQGdtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IkFkbWluaXN0cmFkb3IiLCJ0aW1lc3RhbXAiOjE3NjQ1MTI4NjYxNjZ9"
             description: ""
             disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/portfolios/inativos
-        name: Retornar todos os portfólios inativos
+      - name: Tipos de Usuários
         meta:
-          id: req_b3953b289538405c96d2f0a0c20648e1
-          created: 1763919694402
-          modified: 1763919710719
-          isPrivate: false
+          id: fld_0c9aac476943426bb930e56b943ad4c9
+          created: 1763919278242
+          modified: 1764513255083
+          sortKey: -1764513255057
           description: ""
-          sortKey: -1763919694402
-        method: GET
+        children:
+          - url: http://localhost:8001/tiposUsuarios
+            name: Retornar todos os tipos de usuários
+            meta:
+              id: req_b3de4bb11617410684d4c32893c54f14
+              created: 1763921076314
+              modified: 1764541324372
+              isPrivate: false
+              description: ""
+              sortKey: -1763921076314
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposUsuarios/1
+            name: Desativar tipo de usuário
+            meta:
+              id: req_f95142b505844177942799991ef7bc07
+              created: 1763921180174
+              modified: 1763921317805
+              isPrivate: false
+              description: ""
+              sortKey: -1763921180174
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposUsuarios/1
+            name: Retornar tipo de usuário por id
+            meta:
+              id: req_2afa84f213a4493d8a0e08ed01982ee4
+              created: 1763921205487
+              modified: 1763921225941
+              isPrivate: false
+              description: ""
+              sortKey: -1763921205487
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposUsuarios
+            name: Cadastrar tipo de usuário
+            meta:
+              id: req_d56233230bcf4e8e93720d241a4abd9f
+              created: 1763921276256
+              modified: 1763921344411
+              isPrivate: false
+              description: ""
+              sortKey: -1763921276256
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "tipo":"Supervisor"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/tiposUsuarios/1
+            name: Atualizar tipo de usuário
+            meta:
+              id: req_4b69ea175c484c5cbc0455d0e8b875ba
+              created: 1763921359741
+              modified: 1763921397411
+              isPrivate: false
+              description: ""
+              sortKey: -1763921359741
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "status":"Ativo"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
         headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
+          - name: Authorization
+            value: Bearer
+              "eyJpZCI6MSwibm9tZSI6Ikd1c3RoYXZvIFNvYXJlcyIsImVtYWlsIjoiZ3VzdGhhdm9yc29hcmVzQGdtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IkFkbWluaXN0cmFkb3IiLCJ0aW1lc3RhbXAiOjE3NjQ1MTI4NjYxNjZ9"
             description: ""
             disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/portfolios/1
-        name: Retornar portfólio por ID
+      - name: Usuários
         meta:
-          id: req_02ceb1e45ce84cbab05d828b4024a17c
-          created: 1763919726631
-          modified: 1763919741923
-          isPrivate: false
+          id: fld_49fb55a80b9749e8b69fa9cd89dceff1
+          created: 1763919321936
+          modified: 1764541382106
+          sortKey: -1764513255857
           description: ""
-          sortKey: -1763919726631
-        method: GET
+        children:
+          - url: http://localhost:8001/usuarios
+            name: "Retornar todos os usuários "
+            meta:
+              id: req_75efed56b58446298bb7c1cbfbd41fbb
+              created: 1763920070544
+              modified: 1764541328880
+              isPrivate: false
+              description: ""
+              sortKey: -1763920081791
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/usuarios/1
+            name: Retornar usuário por id
+            meta:
+              id: req_db3103732b484632bee545a5c329a5bf
+              created: 1763920166962
+              modified: 1764512570161
+              isPrivate: false
+              description: ""
+              sortKey: -1763920081991
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/usuarios/1
+            name: Desativar usuário
+            meta:
+              id: req_022850a8ebaa4c22bbba661dbd4bffff
+              created: 1763920191167
+              modified: 1764512533205
+              isPrivate: false
+              description: ""
+              sortKey: -1763920191167
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: '"eyJpZCI6MSwibm9tZSI6Ikd1c3RoYXZvIFNvYXJlcyIsImVtYWlsIjoiZ3VzdGhhdm9yc29hcmVzQGdtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IkFkbWluaXN0cmFkb3IiLCJ0aW1lc3RhbXAiOjE3NjQ1MTI0NjE3NTh9"'
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/usuarios
+            name: Cadastrar usuário
+            meta:
+              id: req_0f9198a36a5f4e0f83051b6491ada0a7
+              created: 1763920212665
+              modified: 1764453859259
+              isPrivate: false
+              description: ""
+              sortKey: -1763920212665
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "id_tipo_usuario":2,
+                "nome":"Teste",
+                "senha":"#Gusthavo28",
+                "cpf":"05883633080",
+                "data_nascimento":"2004-01-01",
+                "telefone":"54234241",
+                "cep":"90870390",
+                "endereco": "Rua Nunes 339",
+                "email": "teste@gmail.com",
+                "status":"Ativo"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/usuarios/5
+            name: Atualizar usuário
+            meta:
+              id: req_ea46eb2a3d1d4486ad9db6aed220289e
+              created: 1763920974257
+              modified: 1764454422825
+              isPrivate: false
+              description: ""
+              sortKey: -1763920212765
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {"cpf":"05883633080",
+                "senha":"#Teste14"}
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8001/usuarios/auth/login
+            name: Logar
+            meta:
+              id: req_eb11bd1887b44fb98b6c18a9c75fea28
+              created: 1764466528955
+              modified: 1764512994071
+              isPrivate: false
+              description: ""
+              sortKey: -1763920212865
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                "email":"gusthavorsoares@gmail.com",
+                "senha":"#Gusthavo28"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/12.1.0
+                description: ""
+                disabled: false
+              - name: Authorization
+                value: Bearer
+                description: ""
+                disabled: false
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
         headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
+          - name: Authorization
+            value: Bearer
+              "eyJpZCI6MSwibm9tZSI6Ikd1c3RoYXZvIFNvYXJlcyIsImVtYWlsIjoiZ3VzdGhhdm9yc29hcmVzQGdtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IkFkbWluaXN0cmFkb3IiLCJ0aW1lc3RhbXAiOjE3NjQ1MTI4NjYxNjZ9"
             description: ""
             disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/portfolios
-        name: Cadastrar Portfólio
-        meta:
-          id: req_51501486ac0c47988026321802a1d5ae
-          created: 1763919748673
-          modified: 1763919864321
-          isPrivate: false
-          description: ""
-          sortKey: -1763919748673
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {"id_tipo_solicitante":1,
-            "nome":"Teste",
-            "status":"Inativo"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/portfolios/1
-        name: Desativar Portfólio
-        meta:
-          id: req_587eda060cd4490cbdff74daa51f63c7
-          created: 1763919898324
-          modified: 1763919958886
-          isPrivate: false
-          description: ""
-          sortKey: -1763919748773
-        method: DELETE
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/portfolios/1
-        name: Atualizar Portfólio
-        meta:
-          id: req_ab01dc46b6e8444e8d6af97192212c91
-          created: 1763919997345
-          modified: 1763920034043
-          isPrivate: false
-          description: ""
-          sortKey: -1763919997345
-        method: PUT
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "status":"Ativo"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: Serviços
-    meta:
-      id: fld_5337941f4b084b39b9669a0e2b61fc85
-      created: 1763919224673
-      modified: 1763955203076
-      sortKey: -1763919224673
-      description: ""
-    children:
-      - url: http://localhost:8001/servicos
-        name: Retornar serviços ativos
-        meta:
-          id: req_0ec2f133e9704de5bc816979dd0c2048
-          created: 1763955197907
-          modified: 1763955396669
-          isPrivate: false
-          description: ""
-          sortKey: -1763955197907
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/servicos/inativos
-        name: Retornar serviços inativos
-        meta:
-          id: req_e4100d5e9c28454d920ffa494e25cd8e
-          created: 1763955213529
-          modified: 1763955384154
-          isPrivate: false
-          description: ""
-          sortKey: -1763955213529
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "  http://localhost:8001/servicos/18"
-        name: Retornar serviços por id
-        meta:
-          id: req_c2683c158e6e4965a16ea1d718446681
-          created: 1763955222719
-          modified: 1763955370027
-          isPrivate: false
-          description: ""
-          sortKey: -1763955222719
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "  http://localhost:8001/servicos/19"
-        name: Desativar serviço
-        meta:
-          id: req_4c189b7eda45429e92b8b1702b66e9ef
-          created: 1763955234554
-          modified: 1763956328000
-          isPrivate: false
-          description: ""
-          sortKey: -1763955234554
-        method: DELETE
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "  http://localhost:8001/servicos/19"
-        name: Atualizar serviço
-        meta:
-          id: req_3c10d3ae9de0438985a8993ce3c17202
-          created: 1763955244349
-          modified: 1763956311620
-          isPrivate: false
-          description: ""
-          sortKey: -1763955244349
-        method: PUT
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "status":"Inativo"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/servicos
-        name: Cadastrar serviço
-        meta:
-          id: req_281249b84b4b4c39966767bc495be0e2
-          created: 1763955253488
-          modified: 1763956077656
-          isPrivate: false
-          description: ""
-          sortKey: -1763955253488
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "id_portfolio":2,
-            "nome":"Emissão de nota fiscal"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: Solicitantes
-    meta:
-      id: fld_0b0ac2434782492a8b26dc82b9f397f5
-      created: 1763919241855
-      modified: 1763919241855
-      sortKey: -1763919241856
-      description: ""
-    children:
-      - url: http://localhost:8001/solicitantes
-        name: Retornar solicitantes ativos
-        meta:
-          id: req_92f928cb2d4d46d49db763ec4150188c
-          created: 1763954701569
-          modified: 1763954720161
-          isPrivate: false
-          description: ""
-          sortKey: -1763954701569
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/solicitantes/1
-        name: Retornar solicitantes por id
-        meta:
-          id: req_9bd80aca74c049eb85c69526288c53af
-          created: 1763954827090
-          modified: 1763954851217
-          isPrivate: false
-          description: ""
-          sortKey: -1763954827090
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/solicitantes/1
-        name: Desativar solicitante
-        meta:
-          id: req_2a9b89b2cfbe47c482e9bc6faa594ad7
-          created: 1763954858069
-          modified: 1763954871043
-          isPrivate: false
-          description: ""
-          sortKey: -1763954858069
-        method: DELETE
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/solicitantes/1
-        name: Atualizar solicitante
-        meta:
-          id: req_3976d754a9e64b87bb9c6949e06bc4fd
-          created: 1763954883108
-          modified: 1763954928554
-          isPrivate: false
-          description: ""
-          sortKey: -1763954883108
-        method: PUT
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "status":"Ativo"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/solicitantes
-        name: Cadastrar novo solicitante
-        meta:
-          id: req_857832a5f3744a529f61ba0ede1505ab
-          created: 1763954948834
-          modified: 1763955788626
-          isPrivate: false
-          description: ""
-          sortKey: -1763954948834
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "id_tipo_solicitante":4,
-            "nome":"Maria",
-            "identificacao":"37827448020",
-            "data_nascimento":"1974-08-02",
-            "telefone":"51935607651",
-            "cep":"90870390",
-            "endereco":"Rua Nunes 339",
-            "email":"maria@gmail.com"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/solicitantes/inativos
-        name: Retornar solicitantes inativos
-        meta:
-          id: req_87fe3fbc065a457188cebb399a43c182
-          created: 1763954971473
-          modified: 1763954992671
-          isPrivate: false
-          description: ""
-          sortKey: -1763954971473
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: Tipos de Ocorrências
-    meta:
-      id: fld_0401b37fecbb458497706ea95128a39a
-      created: 1763919261480
-      modified: 1763954478301
-      sortKey: -1763919261480
-      description: ""
-    children:
-      - url: http://localhost:8001/tiposOcorrencias/1
-        name: Retornar tipo de ocorrência por id
-        meta:
-          id: req_2863d61e3dc94244aa5915184b5e214f
-          created: 1763954385612
-          modified: 1763954443701
-          isPrivate: false
-          description: ""
-          sortKey: -1763954385612
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposOcorrencias
-        name: Retornar tipos de ocorrências
-        meta:
-          id: req_c6b8e86fda7a42f99822cc13599a3b5e
-          created: 1763954447725
-          modified: 1763954464405
-          isPrivate: false
-          description: ""
-          sortKey: -1763954447725
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposOcorrencias
-        name: Cadastrar novo tipo de ocorrência
-        meta:
-          id: req_042bcb2100e242eca3fc562c1d68f1e9
-          created: 1763954479839
-          modified: 1763954521456
-          isPrivate: false
-          description: ""
-          sortKey: -1763954479839
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "tipo":"Mudança"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposOcorrencias/3
-        name: Deletar tipo de ocorrência
-        meta:
-          id: req_c9f7b13ac99c4cb8beaa5b1954d53507
-          created: 1763954524228
-          modified: 1763954643071
-          isPrivate: false
-          description: ""
-          sortKey: -1763954524228
-        method: DELETE
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposOcorrencias/1
-        name: Atualizar tipo de ocorrência
-        meta:
-          id: req_fa7ef15b87f24716add7db89fcb597db
-          created: 1763954634096
-          modified: 1763954692800
-          isPrivate: false
-          description: ""
-          sortKey: -1763954634096
-        method: PUT
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "tipo":"Requisição"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: Tipos de Solicitantes
-    meta:
-      id: fld_a62ff2d0a0c7443a9735c6d3ba433591
-      created: 1763919269297
-      modified: 1763921538163
-      sortKey: -1763919269297
-      description: ""
-    children:
-      - url: http://localhost:8001/tiposSolicitantes
-        name: Retornar todos os tipos de solicitantes ativos
-        meta:
-          id: req_14b94d036b0f4083bc0032c6d1de34ba
-          created: 1763921545788
-          modified: 1763921567436
-          isPrivate: false
-          description: ""
-          sortKey: -1763921545788
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposSolicitantes/inativos
-        name: Retornar todos os tipos de solicitantes inativos
-        meta:
-          id: req_09563551669a40db93c8f8d02d87da7b
-          created: 1763921673576
-          modified: 1763954382159
-          isPrivate: false
-          description: ""
-          sortKey: -1763921609682
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposSolicitantes
-        name: Cadastrar novo tipo de solicitante
-        meta:
-          id: req_3d7b97626e30491aa3a716d709104322
-          created: 1763921699833
-          modified: 1763921747736
-          isPrivate: false
-          description: ""
-          sortKey: -1763921699833
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "tipo":"Teste",
-            "status":"Inativo"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposSolicitantes/1
-        name: Desativar tipo de solicitante
-        meta:
-          id: req_a5c4ec17f86d48ccb43053412028b624
-          created: 1763921756094
-          modified: 1763921776645
-          isPrivate: false
-          description: ""
-          sortKey: -1763921756094
-        method: DELETE
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposSolicitantes/1
-        name: Atualizar tipo de solicitante
-        meta:
-          id: req_b925a61179a44040a8021bcdd0245f77
-          created: 1763921785199
-          modified: 1763921848324
-          isPrivate: false
-          description: ""
-          sortKey: -1763921785199
-        method: PUT
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "status":"Ativo"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposSolicitantes/1
-        name: Retornar tipo de solicitante por id
-        meta:
-          id: req_13bb7bfe352d487aaf09d41fa3623791
-          created: 1763921867608
-          modified: 1763921896254
-          isPrivate: false
-          description: ""
-          sortKey: -1763921867608
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: Tipos de Usuários
-    meta:
-      id: fld_0c9aac476943426bb930e56b943ad4c9
-      created: 1763919278242
-      modified: 1763921541419
-      sortKey: -1763919278242
-      description: ""
-    children:
-      - url: http://localhost:8001/tiposUsuarios
-        name: Retornar todos os tipos de usuários ativos
-        meta:
-          id: req_b3de4bb11617410684d4c32893c54f14
-          created: 1763921076314
-          modified: 1763921106090
-          isPrivate: false
-          description: ""
-          sortKey: -1763921076314
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposUsuarios/inativos
-        name: Retornar todos os tipos de usuários inativos
-        meta:
-          id: req_4cf84e4237eb41d79dface0cd2abc5a9
-          created: 1763921149992
-          modified: 1763921170141
-          isPrivate: false
-          description: ""
-          sortKey: -1763921149992
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposUsuarios/1
-        name: Desativar tipo de usuário
-        meta:
-          id: req_f95142b505844177942799991ef7bc07
-          created: 1763921180174
-          modified: 1763921317805
-          isPrivate: false
-          description: ""
-          sortKey: -1763921180174
-        method: DELETE
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposUsuarios/1
-        name: Retornar tipo de usuário por id
-        meta:
-          id: req_2afa84f213a4493d8a0e08ed01982ee4
-          created: 1763921205487
-          modified: 1763921225941
-          isPrivate: false
-          description: ""
-          sortKey: -1763921205487
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposUsuarios
-        name: Cadastrar tipo de usuário
-        meta:
-          id: req_d56233230bcf4e8e93720d241a4abd9f
-          created: 1763921276256
-          modified: 1763921344411
-          isPrivate: false
-          description: ""
-          sortKey: -1763921276256
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "tipo":"Supervisor"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/tiposUsuarios/1
-        name: Atualizar tipo de usuário
-        meta:
-          id: req_4b69ea175c484c5cbc0455d0e8b875ba
-          created: 1763921359741
-          modified: 1763921397411
-          isPrivate: false
-          description: ""
-          sortKey: -1763921359741
-        method: PUT
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "status":"Ativo"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: Usuários
-    meta:
-      id: fld_49fb55a80b9749e8b69fa9cd89dceff1
-      created: 1763919321936
-      modified: 1763920086207
-      sortKey: -1763919321936
-      description: ""
-    children:
-      - url: http://localhost:8001/usuarios
-        name: Retornar todos os usuários ativos
-        meta:
-          id: req_75efed56b58446298bb7c1cbfbd41fbb
-          created: 1763920070544
-          modified: 1763920096702
-          isPrivate: false
-          description: ""
-          sortKey: -1763920081791
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/usuarios/inativos
-        name: Retornar todos os usuários inativos
-        meta:
-          id: req_2c59e463b7954d36a1d1ac0ae5ba87f8
-          created: 1763920106573
-          modified: 1763920129000
-          isPrivate: false
-          description: ""
-          sortKey: -1763920081891
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/usuarios/1
-        name: Retornar usuário por id
-        meta:
-          id: req_db3103732b484632bee545a5c329a5bf
-          created: 1763920166962
-          modified: 1763921893009
-          isPrivate: false
-          description: ""
-          sortKey: -1763920081991
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/usuarios/1
-        name: Desativar usuário
-        meta:
-          id: req_022850a8ebaa4c22bbba661dbd4bffff
-          created: 1763920191167
-          modified: 1763920203660
-          isPrivate: false
-          description: ""
-          sortKey: -1763920191167
-        method: DELETE
-        headers:
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/usuarios
-        name: Cadastrar usuário
-        meta:
-          id: req_0f9198a36a5f4e0f83051b6491ada0a7
-          created: 1763920212665
-          modified: 1764453859259
-          isPrivate: false
-          description: ""
-          sortKey: -1763920212665
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "id_tipo_usuario":2,
-            "nome":"Teste",
-            "senha":"#Gusthavo28",
-            "cpf":"05883633080",
-            "data_nascimento":"2004-01-01",
-            "telefone":"54234241",
-            "cep":"90870390",
-            "endereco": "Rua Nunes 339",
-            "email": "teste@gmail.com",
-            "status":"Ativo"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: http://localhost:8001/usuarios/5
-        name: Atualizar usuário
-        meta:
-          id: req_ea46eb2a3d1d4486ad9db6aed220289e
-          created: 1763920974257
-          modified: 1764454422825
-          isPrivate: false
-          description: ""
-          sortKey: -1763920212765
-        method: PUT
-        body:
-          mimeType: application/json
-          text: |-
-            {"cpf":"05883633080",
-            "senha":"#Teste14"}
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/12.1.0
-            description: ""
-            disabled: false
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
+    headers:
+      - name: Authorization
+        value: Bearer
+          "eyJpZCI6MSwibm9tZSI6Ikd1c3RoYXZvIFNvYXJlcyIsImVtYWlsIjoiZ3VzdGhhdm9yc29hcmVzQGdtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IkFkbWluaXN0cmFkb3IiLCJ0aW1lc3RhbXAiOjE3NjQ1NDEzODcwOTN9"
+        description: ""
+        disabled: false
 cookieJar:
   name: Default Jar
   meta:

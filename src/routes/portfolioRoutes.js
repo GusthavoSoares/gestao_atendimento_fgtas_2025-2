@@ -1,14 +1,10 @@
-import { Router } from 'express'
-
+﻿import { Router } from 'express'
 import { PortfolioController } from '../controller/PortfolioController.js'
-
+import ValidadorAutenticacao from '../middleware/autenticacao.js'
 const router = Router()
-
-router.post('/', PortfolioController.criar)
-router.get('/', PortfolioController.listar)
-router.get('/inativos', PortfolioController.listarInativos)
-router.get('/:id', PortfolioController.buscarPorId)
-router.put("/:id", PortfolioController.atualizar)
-router.delete("/:id", PortfolioController.deletar)
-
+router.post('/', ValidadorAutenticacao.validarToken, PortfolioController.criar)
+router.get('/', ValidadorAutenticacao.validarToken, PortfolioController.listar)
+router.get('/:id', ValidadorAutenticacao.validarToken, PortfolioController.buscarPorId)
+router.put("/:id", ValidadorAutenticacao.validarToken, PortfolioController.atualizar)
+router.delete("/:id", ValidadorAutenticacao.validarToken, PortfolioController.deletar)
 export default router
