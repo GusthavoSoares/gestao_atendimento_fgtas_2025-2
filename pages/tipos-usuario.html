@@ -18,7 +18,12 @@
     <div class="container-fluid py-4">
         <div class="row mb-4">
             <div class="col-12">
-                <h2><i class="fas fa-users-cog"></i> Tipos de Usuário</h2>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="fas fa-users-cog"></i> Tipos de Usuário</h2>
+                    <button class="btn btn-primary" id="btnNovoTipoUsuario">
+                        <i class="fas fa-plus"></i> Novo Tipo
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -27,9 +32,7 @@
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Gerenciar Tipos de Usuário</h5>
-                        <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalTipoUsuario">
-                            <i class="fas fa-plus"></i> Novo Tipo
-                        </button>
+                        <div id="botoesFiltroContainer"></div>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
@@ -41,7 +44,6 @@
                                     <option value="Inativo">Inativo</option>
                                 </select>
                             </div>
-                            <div id="botoesFiltroContainer"></div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
@@ -67,38 +69,7 @@
     </div>
 
 
-    <div class="modal fade" id="modalTipoUsuario" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="modalTipoUsuarioTitulo">Novo Tipo de Usuário</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formTipoUsuario">
-                        <input type="hidden" id="tipoUsuarioId">
-
-                        <div class="mb-3">
-                            <label for="tipoUsuario" class="form-label">Tipo *</label>
-                            <input type="text" class="form-control" id="tipoUsuario" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="statusTipoUsuario" class="form-label">Status *</label>
-                            <select class="form-select" id="statusTipoUsuario" required>
-                                <option value="Ativo">Ativo</option>
-                                <option value="Inativo">Inativo</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnSalvarTipoUsuario">Salvar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="modals-root"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/middleware/UIMiddleware.js"></script>
@@ -112,11 +83,17 @@
     <script src="../js/renders/BotoesFiltroRender.js"></script>
     <script src="../js/services/HttpService.js"></script>
     <script src="../js/services/NotificationService.js"></script>
+    <script src="../js/services/ModalService.js"></script>
     <script src="../js/modals/ModalTipoUsuario.js"></script>
     <script src="../js/renders/TipoUsuarioRender.js"></script>
     <script src="../js/frontController/TipoUsuarioFrontController.js"></script>
     <script>
-        Inicializador.inicializar({ requerAdmin: true })
+        Inicializador.inicializar({
+            requerAdmin: true,
+            callback: () => {
+                window.tipoUsuarioFrontController = new TipoUsuarioFrontController()
+            }
+        })
     </script>
 </body>
 

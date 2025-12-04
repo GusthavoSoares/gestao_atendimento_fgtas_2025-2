@@ -20,7 +20,14 @@
             ])
             BotoesFiltroRender.renderizarBotoes('botoesFiltroContainer')
             this.configurarFiltros()
-            document.getElementById('btnSalvarPortfolio').addEventListener('click', () => this.salvarPortfolio())
+
+            // Configurar botão de novo portfólio
+            const btnNovo = document.getElementById('btnNovoPortfolio')
+            if (btnNovo) {
+                btnNovo.addEventListener('click', () => {
+                    this.modal.abrir(() => this.carregarPortfolios())
+                })
+            }
         } catch (erro) {
             console.error('Erro na inicialização:', erro)
             this.notification.mostrarErro('Erro ao carregar dados: ' + erro.message)
@@ -52,15 +59,21 @@
         this.filtroController.configurarSelect('filtroTipoSolicitante', 'tipoSolicitante')
         const btnAplicar = document.getElementById('btnAplicarFiltros')
         if (btnAplicar) btnAplicar.classList.add('d-none')
-        
+
         BotoesFiltroRender.configurarEventos(
-            () => this.filtroController.limparFiltros(),
+            () => this.limparFiltros(),
             async () => {
                 await this.carregarPortfolios()
                 this.notification.mostrarSucesso('Dados recarregados com sucesso!')
             }
         )
     }
+
+    limparFiltros() {
+        this.filtroController.limparFiltros()
+        this.notification.mostrarSucesso('Filtros limpos com sucesso!')
+    }
+
     aplicarFiltros(filtros) {
         this.renderizarTabela(filtros)
     }
@@ -77,17 +90,37 @@
         if (filtroTipo && filtroTipo !== 'todos') {
             portfolios = portfolios.filter(p => p.tipo_solicitante === filtroTipo)
         }
-        portfolios.sort((a,b) => a.id - b.id)
+        portfolios.sort((a, b) => a.id - b.id)
         this.render.renderizarTabela(
             portfolios,
             (id) => this.editarPortfolio(id),
-            (id) => this.toggleStatus(id)
+            (id, status) => this.toggleStatus(id),
+            (id) => this.deletarPermanente(id)
         )
     }
+    async deletarPermanente(id) {
+        if (!PermissaoAdmin.verificarPermissao(false)) {
+            this.notification.mostrarErro('Apenas administradores podem excluir portfólios permanentemente!')
+            return
+        }
+        if (!confirm('Tem certeza que deseja excluir este portfólio permanentemente? Esta ação não pode ser desfeita.')) return
+        try {
+            const token = localStorage.getItem('token')
+            const resposta = await fetch(`${this.API_BASE_URL}/portfolios/${id}/deletar`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            if (!resposta.ok) throw new Error('Erro ao excluir portfólio')
+            this.notification.mostrarSucesso('Portfólio excluído com sucesso!')
+            await this.carregarPortfolios()
+        } catch (erro) {
+            this.notification.mostrarErro(erro.message)
+        }
+    }
     async editarPortfolio(id) {
-        await this.modal.abrirEditar(id, {
-            onError: (mensagem) => this.notification.mostrarErro(mensagem)
-        })
+        await this.modal.abrirEditar(id, () => this.carregarPortfolios())
     }
     async salvarPortfolio() {
         await this.modal.salvar(async () => {
@@ -111,16 +144,5 @@
         }
     }
 }
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        const instance = new PortfolioFrontController()
-        window.portfolioFrontController = instance
-        window.PortfoliosController = instance
-        window.portfoliosController = instance
-    })
-} else {
-    const instance = new PortfolioFrontController()
-    window.portfolioFrontController = instance
-    window.PortfoliosController = instance
-    window.portfoliosController = instance
-}
+// Não auto-instanciar - será instanciado pelo Inicializador
+window.PortfolioFrontController = PortfolioFrontController

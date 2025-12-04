@@ -17,7 +17,16 @@
                 this.notification.mostrarSucesso('Dados recarregados com sucesso!')
             }
         )
-        document.getElementById('btnSalvarTipoOcorrencia').addEventListener('click', () => this.salvarTipoOcorrencia())
+
+        const btnNovo = document.getElementById('btnNovoTipoOcorrencia')
+        if (btnNovo) {
+            btnNovo.addEventListener('click', () => {
+                this.modal.abrir(() => this.carregarTiposOcorrencia())
+            })
+        }
+
+        // Não adicionar listener aqui - será adicionado quando o modal for aberto
+        // document.getElementById('btnSalvarTipoOcorrencia').addEventListener('click', () => this.salvarTipoOcorrencia())
     }
     async carregarTiposOcorrencia() {
         try {
@@ -30,9 +39,22 @@
     renderizarTabelaOcorrencia(tipos) {
         this.render.renderizarTabela(
             tipos,
-            (id) => this.editarTipoOcorrencia(id),
-            (id) => this.deletarTipoOcorrencia(id)
+            (id) => this.editarTipoOcorrencia(id)
         )
+    }
+    async deletarPermanente(id) {
+        if (!PermissaoAdmin.verificarPermissao(false)) {
+            this.notification.mostrarErro('Apenas administradores podem excluir tipos permanentemente!')
+            return
+        }
+        if (!confirm('Tem certeza que deseja excluir este tipo permanentemente? Esta ação não pode ser desfeita.')) return
+        try {
+            await this.http.delete(`/tiposOcorrencias/${id}/deletar`)
+            this.notification.mostrarSucesso('Tipo excluído permanentemente!')
+            await this.carregarTiposOcorrencia()
+        } catch (erro) {
+            this.notification.mostrarErro(erro.message)
+        }
     }
     async editarTipoOcorrencia(id) {
         this.modal.abrirEditar(id, {
@@ -61,12 +83,5 @@
         }
     }
 }
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        const instance = new TipoOcorrenciaFrontController()
-        window.tipoOcorrenciaFrontController = instance
-    })
-} else {
-    const instance = new TipoOcorrenciaFrontController()
-    window.tipoOcorrenciaFrontController = instance
-}
+// Não auto-instanciar - será instanciado pelo Inicializador
+window.TipoOcorrenciaFrontController = TipoOcorrenciaFrontController

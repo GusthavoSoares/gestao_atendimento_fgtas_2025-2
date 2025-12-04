@@ -31,6 +31,10 @@
     margin-bottom: var(--spacing-sm);
 }
 
+body:has(.modal-blur.show)+.modal-backdrop {
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
 
 @media (max-width: 768px) {
     .card-custom {

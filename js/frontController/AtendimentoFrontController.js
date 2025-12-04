@@ -1,27 +1,46 @@
 ﻿class AtendimentoFrontController {
     constructor() {
-        this.API_BASE_URL = 'http://localhost:8001'
-        this.atendimentos = []
-        this.filtroStatus = 'todos'
-        this.filtroSolicitante = ''
-        this.filtroTipo = 'todos'
-        this.tiposOcorrencia = []
-        this.modal = new ModalAtendimento(this.API_BASE_URL)
-        this.render = new AtendimentoRender()
-        this.filtroRender = new FiltroRender()
-        this.inicializarListagem()
+        try {
+            this.API_BASE_URL = 'http://localhost:8001'
+            this.atendimentos = []
+            this.filtroStatus = 'todos'
+            this.filtroSolicitante = ''
+            this.filtroTipo = 'todos'
+            this.tiposOcorrencia = []
+            this.notification = new NotificationService()
+            this.modal = new ModalAtendimento(this.API_BASE_URL)
+            this.render = new AtendimentoRender()
+            this.filtroRender = new FiltroRender()
+            this.inicializarListagem()
+        } catch (error) {
+            console.error('Erro ao inicializar AtendimentoFrontController:', error)
+        }
     }
     async inicializarListagem() {
-        this.configurarFiltros()
-        await Promise.all([
-            this.carregarAtendimentos(),
-            this.carregarTiposOcorrencia(),
-            this.modal.carregarDadosSelects()
-        ])
-        BotoesFiltroRender.renderizarBotoes('botoesFiltroContainer')
-        // Preenche selects da modal de criação apenas se os elementos existirem no DOM
-        if (document.getElementById('solicitanteCriar')) {
-            this.modal.preencherSelects('Criar')
+        try {
+            await Promise.all([
+                this.carregarAtendimentos(),
+                this.carregarTiposOcorrencia(),
+                this.modal.carregarDadosSelects()
+            ])
+            this.configurarFiltros()
+
+            // Configurar botão de novo atendimento
+            const btnNovo = document.getElementById('btnNovoAtendimento')
+            if (btnNovo) {
+                btnNovo.addEventListener('click', () => {
+                    this.modal.abrirModalCriar(async () => {
+                        await this.carregarAtendimentos()
+                    })
+                })
+            }
+
+            // Preenche selects da modal de criação apenas se os elementos existirem no DOM
+            if (document.getElementById('solicitanteCriar')) {
+                this.modal.preencherSelects('Criar')
+            }
+        } catch (error) {
+            console.error('Erro ao inicializar listagem de atendimentos:', error)
         }
     }
     async carregarTiposOcorrencia() {
@@ -51,7 +70,7 @@
         const filtroSelect = document.getElementById('filtroStatus')
         const filtroSol = document.getElementById('filtroSolicitante')
         const filtroTipo = document.getElementById('filtroTipo')
-        
+
         if (filtroSelect) {
             filtroSelect.addEventListener('change', (e) => {
                 this.filtroStatus = e.target.value
@@ -70,13 +89,14 @@
                 this.renderizarTabela()
             })
         }
-        
+
+        BotoesFiltroRender.renderizarBotoes('botoesFiltroContainer')
         BotoesFiltroRender.configurarEventos(
             () => this.limparFiltros(),
-            () => this.recarregarDados()
+            async () => await this.recarregarDados()
         )
     }
-    
+
     limparFiltros() {
         this.filtroStatus = 'todos'
         this.filtroSolicitante = ''
@@ -88,13 +108,12 @@
         if (filtroSol) filtroSol.value = ''
         if (filtroTipo) filtroTipo.value = 'todos'
         this.renderizarTabela()
+        this.notification.mostrarSucesso('Filtros limpos com sucesso!')
     }
-    
+
     async recarregarDados() {
         await this.carregarAtendimentos()
-        if (this.notification) {
-            this.notification.mostrarSucesso('Dados recarregados com sucesso!')
-        }
+        this.notification.mostrarSucesso('Dados recarregados com sucesso!')
     }
     async carregarAtendimentos() {
         try {
@@ -112,7 +131,7 @@
         }
     }
     renderizarTabela() {
-        let atendimentosFiltrados = [...this.atendimentos].sort((a,b) => a.id - b.id)
+        let atendimentosFiltrados = [...this.atendimentos].sort((a, b) => a.id - b.id)
         if (this.filtroStatus !== 'todos') {
             atendimentosFiltrados = atendimentosFiltrados.filter(a => {
                 const status = (a.status || '').trim()
@@ -130,38 +149,61 @@
         this.render.renderizarTabela(
             atendimentosFiltrados,
             (id) => this.abrirModalEditar(id),
-            (id, status) => this.toggleStatus(id, status)
+            (id, status) => this.toggleStatus(id, status),
+            (id) => this.deletarAtendimento(id)
         )
     }
     async toggleStatus(id, statusAtual) {
         const novoStatus = statusAtual === 'Em Andamento' ? 'Finalizado' : 'Em Andamento'
         const acao = statusAtual === 'Em Andamento' ? 'finalizar' : 'reabrir'
-        
+
         if (!confirm(`Tem certeza que deseja ${acao} este atendimento?`)) return
-        
+
         try {
             const token = localStorage.getItem('token')
             const resposta = await fetch(`${this.API_BASE_URL}/atendimentos/${id}`, {
                 method: 'PUT',
-                headers: { 
+                headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     status: novoStatus,
                     data_fim: novoStatus === 'Finalizado' ? new DateService().agoraISOBrasilia() : null
                 })
             })
             if (!resposta.ok) throw new Error(`Erro ao ${acao} atendimento`)
-            this.render.mostrarMensagem(`Atendimento ${statusAtual === 'Em Andamento' ? 'finalizado' : 'reaberto'} com sucesso!`, 'success')
+            this.notification.mostrarSucesso(`Atendimento ${statusAtual === 'Em Andamento' ? 'finalizado' : 'reaberto'} com sucesso!`)
             await this.carregarAtendimentos()
         } catch (erro) {
-            this.render.mostrarMensagem(erro.message, 'danger')
+            this.notification.mostrarErro(erro.message)
+        }
+    }
+
+    async deletarAtendimento(id) {
+        if (!PermissaoAdmin.verificarPermissao(false)) {
+            this.notification.mostrarErro('Apenas administradores podem excluir atendimentos permanentemente!')
+            return
+        }
+        if (!confirm('Tem certeza que deseja excluir este atendimento? Esta ação não pode ser desfeita.')) return
+
+        try {
+            const token = localStorage.getItem('token')
+            const resposta = await fetch(`${this.API_BASE_URL}/atendimentos/${id}/deletar`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            if (!resposta.ok) throw new Error('Erro ao excluir atendimento')
+            this.notification.mostrarSucesso('Atendimento excluído com sucesso!')
+            await this.carregarAtendimentos()
+        } catch (erro) {
+            this.notification.mostrarErro(erro.message)
         }
     }
     criarAtendimento() {
-        this.modal.criar(async (mensagem) => {
-            this.render.mostrarMensagem(mensagem, 'success')
+        this.modal.criar(async () => {
             await this.carregarAtendimentos()
         })
     }
@@ -184,12 +226,5 @@
         return cores[status] || 'bg-secondary'
     }
 }
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        const instance = new AtendimentoFrontController()
-        window.atendimentoFrontController = instance
-    })
-} else {
-    const instance = new AtendimentoFrontController()
-    window.atendimentoFrontController = instance
-}
+// Não auto-instanciar - será instanciado pelo Inicializador
+window.AtendimentoFrontController = AtendimentoFrontController

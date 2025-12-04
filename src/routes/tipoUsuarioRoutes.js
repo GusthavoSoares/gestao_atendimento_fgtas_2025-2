@@ -7,4 +7,5 @@ router.get('/', ValidadorAutenticacao.validarToken, TipoUsuarioController.listar
 router.get('/:id', ValidadorAutenticacao.validarToken, TipoUsuarioController.buscarPorId)
 router.put("/:id", ValidadorAutenticacao.validarToken, TipoUsuarioController.atualizar)
 router.delete("/:id", ValidadorAutenticacao.validarToken, TipoUsuarioController.deletar)
+router.delete("/:id/deletar", ValidadorAutenticacao.validarToken, TipoUsuarioController.deletarPermanente)
 export default router

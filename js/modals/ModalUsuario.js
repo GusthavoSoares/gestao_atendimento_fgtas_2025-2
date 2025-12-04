@@ -7,34 +7,62 @@
         this.tiposUsuarios = []
         this._modalCriar = null
         this._modalEditar = null
-        this.currentCallback = null
+        this.currentCallback = { onSuccess: null, onError: null }
+        this.render = new UsuarioRender(this.dateService)
+        this.modalService = new ModalService()
+        this._submitting = false
     }
-    get modalCriar() {
-        if (!this._modalCriar) {
-            const element = document.getElementById('modalCriarUsuario')
-            if (element) {
-                this._modalCriar = new bootstrap.Modal(element)
-            }
+
+    async ensureTemplates() {
+        // Verifica se os modais já existem, se não, cria ambos
+        const modalCriar = document.getElementById('modalCriarUsuario')
+        const modalEditar = document.getElementById('modalEditarUsuario')
+
+        if (!modalCriar || !modalEditar) {
+            this.modalService.ensureElement('modalCriarUsuario', () => this.render.getModalTemplates())
         }
-        return this._modalCriar
     }
-    get modalEditar() {
-        if (!this._modalEditar) {
-            const element = document.getElementById('modalEditarUsuario')
-            if (element) {
-                this._modalEditar = new bootstrap.Modal(element)
-            }
-        }
-        return this._modalEditar
-    }
+
     async carregarTiposUsuarios() {
         try {
             this.tiposUsuarios = await this.http.get('/tiposUsuarios')
         } catch (erro) {
             console.error('Erro ao carregar tipos de usuários:', erro)
+            this.tiposUsuarios = []
         }
     }
-    preencherSelectTipos(selectId) {
+
+    async verificarEmailDuplicado(email, idExcluir = null) {
+        try {
+            const usuarios = await this.http.get('/usuarios')
+            return usuarios.some(u =>
+                u.email.toLowerCase() === email.toLowerCase() &&
+                (!idExcluir || u.id !== parseInt(idExcluir))
+            )
+        } catch (erro) {
+            console.error('Erro ao verificar email:', erro)
+            return false
+        }
+    }
+
+    async verificarCPFDuplicado(cpf, idExcluir = null) {
+        try {
+            const cpfLimpo = cpf.replace(/\D/g, '')
+            if (!cpfLimpo) return false
+
+            const usuarios = await this.http.get('/usuarios')
+            return usuarios.some(u =>
+                u.cpf && u.cpf.replace(/\D/g, '') === cpfLimpo &&
+                (!idExcluir || u.id !== parseInt(idExcluir))
+            )
+        } catch (erro) {
+            console.error('Erro ao verificar CPF:', erro)
+            return false
+        }
+    }
+
+    async preencherSelectTipos(selectId) {
+        if (!this.tiposUsuarios || !this.tiposUsuarios.length) await this.carregarTiposUsuarios()
         const select = document.getElementById(selectId)
         if (!select) return
         select.innerHTML = '<option value="">Selecione...</option>'
@@ -45,211 +73,353 @@
             select.appendChild(option)
         })
     }
-    abrirCriar() {
-        this.currentCallback = null
-        this.limparFormCriar()
-        this.limparErrosCriar()
-        this.preencherSelectTipos('tipoUsuarioCriar')
-        this.vincularListenersCriar()
-        const statusEl = document.getElementById('statusCriar')
-        if (statusEl) {
-            statusEl.value = 'Ativo'
-            statusEl.setAttribute('disabled', 'disabled')
+
+    async abrirCriar(onSuccess) {
+        this.currentCallback = ModalService.normalizeCallbacks(onSuccess)
+        await this.ensureTemplates()
+        await this.preencherSelectTipos('tipoUsuarioCriar')
+
+        this._modalCriar = this.modalService.createBootstrapModal('modalCriarUsuario')
+        if (!this._modalCriar) {
+            console.error('Erro: Não foi possível criar o modal de usuário.')
+            return
         }
-        this.modalCriar.show()
-    }
-    async abrirEditar(id, onSuccess) {
+
+        const btn = document.getElementById('btnCriarUsuario')
+        if (btn) {
+            const newBtn = btn.cloneNode(true)
+            btn.parentNode.replaceChild(newBtn, btn)
+            newBtn.addEventListener('click', () => this.criar(onSuccess))
+        }
+
+        const cancelarBtn = this._modalCriar._element?.querySelector('[data-bs-dismiss="modal"]')
+        if (cancelarBtn) {
+            cancelarBtn.addEventListener('click', () => {
+                this._modalCriar.hide()
+                this.limparFormCriar()
+            })
+        }
+
+        this._modalCriar.show()
+    } async abrirEditar(id, onSuccess) {
         try {
-            this.currentCallback = onSuccess
-            this.preencherSelectTipos('tipoUsuarioEdit')
+            this.currentCallback = ModalService.normalizeCallbacks(onSuccess)
+            await this.ensureTemplates()
+
+            // Aguardar o DOM ser processado após a injeção e verificar se o elemento existe
+            await new Promise(resolve => setTimeout(resolve, 150))
+
+            // Verificar se o elemento modal realmente existe
+            const modalElement = document.getElementById('modalEditarUsuario')
+            if (!modalElement) {
+                console.error('Elemento modalEditarUsuario não encontrado no DOM')
+                return
+            }
+
+            // Limpar qualquer backdrop órfão
+            const backdrops = document.querySelectorAll('.modal-backdrop')
+            backdrops.forEach(backdrop => backdrop.remove())
+
+            // Remover classe modal-open do body
+            document.body.classList.remove('modal-open')
+            document.body.style.overflow = ''
+            document.body.style.paddingRight = ''
+
+            // Ocultar modal anterior se existir
+            if (this._modalEditar) {
+                try {
+                    this._modalEditar.hide()
+                } catch (e) {
+                    console.log('Modal anterior já estava oculto')
+                }
+                this._modalEditar = null
+            }
+
+            this._modalEditar = this.modalService.createBootstrapModal('modalEditarUsuario')
+            if (!this._modalEditar) {
+                console.error('Erro: Não foi possível criar o modal de edição')
+                return
+            }
+
+            await this.preencherSelectTipos('tipoUsuarioEdit')
             const usuario = await this.http.get(`/usuarios/${id}`)
-            document.getElementById('usuarioIdEdit').value = usuario.id
-            document.getElementById('nomeEdit').value = usuario.nome
-            document.getElementById('emailEdit').value = usuario.email
-            document.getElementById('tipoUsuarioEdit').value = usuario.id_tipo_usuario
-            document.getElementById('statusEdit').value = usuario.status
-            document.getElementById('cpfEdit').value = usuario.cpf || ''
-            document.getElementById('dataNascimentoEdit').value = this.dateService.formatarDataBRParaInput(usuario.data_nascimento)
-            document.getElementById('telefoneEdit').value = usuario.telefone || ''
-            document.getElementById('cepEdit').value = usuario.cep || ''
-            document.getElementById('enderecoEdit').value = usuario.endereco || ''
+            const setIf = (sel, val) => { const el = document.getElementById(sel); if (el) el.value = val }
+            setIf('usuarioIdEdit', usuario.id)
+            setIf('nomeEdit', usuario.nome)
+            setIf('emailEdit', usuario.email)
+            setIf('tipoUsuarioEdit', usuario.id_tipo_usuario)
+            setIf('statusEdit', usuario.status)
+            setIf('cpfEdit', usuario.cpf || '')
+            setIf('dataNascimentoEdit', this.dateService.formatarDataBRParaInput(usuario.data_nascimento))
+            setIf('telefoneEdit', usuario.telefone || '')
+            setIf('cepEdit', usuario.cep || '')
+            setIf('enderecoEdit', usuario.endereco || '')
             this.limparErrosEditar()
             this.vincularListenersEditar()
-            this.modalEditar.show()
+            this._modalEditar.show()
         } catch (erro) {
-            if (onSuccess && onSuccess.onError) {
-                onSuccess.onError(erro.message)
-            }
+            const callbacks = ModalService.mergeCallbacks(onSuccess, this.currentCallback)
+            if (callbacks.onError) callbacks.onError(erro.message || 'Erro ao carregar usuário.')
         }
     }
+
     async criar(onSuccess) {
-        const dados = {
-            nome: document.getElementById('nomeCriar').value,
-            email: document.getElementById('emailCriar').value,
-            id_tipo_usuario: document.getElementById('tipoUsuarioCriar').value || null,
-            status: 'Ativo',
-            cpf: document.getElementById('cpfCriar').value || null,
-            data_nascimento: this.dateService.parseDataBRParaISO(document.getElementById('dataNascimentoCriar').value) || null,
-            telefone: document.getElementById('telefoneCriar').value || null,
-            cep: document.getElementById('cepCriar').value || null,
-            endereco: document.getElementById('enderecoCriar').value,
-            senha: document.getElementById('senhaCriar').value
+        // Prevenir múltiplas submissões
+        if (this._submitting) {
+            return
         }
-        if (dados.cpf) dados.cpf = dados.cpf.replace(/\D/g,'')
-        if (dados.telefone) dados.telefone = dados.telefone.replace(/\D/g,'')
-        if (dados.cep) dados.cep = dados.cep.replace(/\D/g,'')
+
+        const callbacks = ModalService.mergeCallbacks(onSuccess, this.currentCallback)
+
+        const getVal = (id) => {
+            const el = document.getElementById(id)
+            return el ? el.value : ''
+        }
+
+        const dados = {
+            nome: getVal('nomeCriar'),
+            email: getVal('emailCriar'),
+            id_tipo_usuario: getVal('tipoUsuarioCriar') || null,
+            status: 'Ativo',
+            cpf: getVal('cpfCriar') || null,
+            data_nascimento: this.dateService.parseDataBRParaISO(getVal('dataNascimentoCriar')) || null,
+            telefone: getVal('telefoneCriar') || null,
+            cep: getVal('cepCriar') || null,
+            endereco: getVal('enderecoCriar'),
+            senha: getVal('senhaCriar')
+        }
+        // Limpar formatação e converter strings vazias em null
+        if (dados.cpf) {
+            dados.cpf = dados.cpf.replace(/\D/g, '')
+            if (!dados.cpf) dados.cpf = null
+        }
+        if (dados.telefone) {
+            dados.telefone = dados.telefone.replace(/\D/g, '')
+            if (!dados.telefone) dados.telefone = null
+        }
+        if (dados.cep) {
+            dados.cep = dados.cep.replace(/\D/g, '')
+            if (!dados.cep) dados.cep = null
+        }
         this.limparErrosCriar()
         this.limparMensagemCriar()
         let invalido = false
-        if (!dados.nome || dados.nome.trim().length < 3) { this.mostrarErroCampo('nomeCriar','Nome é obrigatório (mín. 3 caracteres).'); invalido = true }
-        if (!dados.email || !this.validation.validarEmail(dados.email)) { this.mostrarErroCampo('emailCriar','Email é obrigatório e deve ser válido.'); invalido = true }
-        if (!dados.id_tipo_usuario) { this.mostrarErroCampo('tipoUsuarioCriar','Tipo de usuário é obrigatório.'); invalido = true }
-        if (!dados.status) { this.mostrarErroCampo('statusCriar','Status é obrigatório.'); invalido = true }
-        if (!dados.endereco || dados.endereco.trim().length < 3) { this.mostrarErroCampo('enderecoCriar','Endereço é obrigatório.'); invalido = true }
-        if (dados.cpf && !this.validation.validarCPF(dados.cpf)) { this.mostrarErroCampo('cpfCriar','CPF inválido.'); invalido = true }
-        if (dados.telefone && !this.validation.validarTelefone(dados.telefone)) { this.mostrarErroCampo('telefoneCriar','Telefone inválido.'); invalido = true }
-        if (dados.cep && !this.validation.validarCEP(dados.cep)) { this.mostrarErroCampo('cepCriar','CEP inválido.'); invalido = true }
-        if (!dados.senha || dados.senha.length < 6) { this.mostrarErroCampo('senhaCriar','Senha é obrigatória (mín. 6 caracteres).'); invalido = true }
+        if (!dados.nome || dados.nome.trim().length < 3) { this.mostrarErroCampo('nomeCriar', 'Nome é obrigatório (mín. 3 caracteres).'); invalido = true }
+        if (!dados.email || !this.validation.validarEmail(dados.email)) { this.mostrarErroCampo('emailCriar', 'Email é obrigatório e deve ser válido.'); invalido = true }
+        if (!dados.id_tipo_usuario) { this.mostrarErroCampo('tipoUsuarioCriar', 'Tipo de usuário é obrigatório.'); invalido = true }
+        if (!dados.status) { this.mostrarErroCampo('statusCriar', 'Status é obrigatório.'); invalido = true }
+        if (!dados.endereco || dados.endereco.trim().length < 3) { this.mostrarErroCampo('enderecoCriar', 'Endereço é obrigatório.'); invalido = true }
+        if (dados.cpf && !this.validation.validarCPF(dados.cpf)) { this.mostrarErroCampo('cpfCriar', 'CPF inválido.'); invalido = true }
+        if (dados.telefone && !this.validation.validarTelefone(dados.telefone)) { this.mostrarErroCampo('telefoneCriar', 'Telefone inválido.'); invalido = true }
+        if (dados.cep && !this.validation.validarCEP(dados.cep)) { this.mostrarErroCampo('cepCriar', 'CEP inválido.'); invalido = true }
+        if (!dados.senha || dados.senha.length < 6) { this.mostrarErroCampo('senhaCriar', 'Senha é obrigatória (mín. 6 caracteres).'); invalido = true }
         if (invalido) {
-            this.mostrarMensagemCriar('Corrija os erros antes de salvar.', 'danger')
+            this.modalService.showMessage('modalCriarUsuarioMensagem', 'Corrija os erros antes de salvar.', 'danger', 4000)
             return
         }
+
+        // Verificar duplicação de email e CPF antes de enviar
+        if (dados.email) {
+            const emailDuplicado = await this.verificarEmailDuplicado(dados.email)
+            if (emailDuplicado) {
+                this.mostrarErroCampo('emailCriar', 'Este email já está cadastrado no sistema.')
+                this.modalService.showMessage('modalCriarUsuarioMensagem', 'Este email já está cadastrado no sistema.', 'danger', 4000)
+                return
+            }
+        }
+
+        if (dados.cpf) {
+            const cpfDuplicado = await this.verificarCPFDuplicado(dados.cpf)
+            if (cpfDuplicado) {
+                this.mostrarErroCampo('cpfCriar', 'Este CPF já está cadastrado no sistema.')
+                this.modalService.showMessage('modalCriarUsuarioMensagem', 'Este CPF já está cadastrado no sistema.', 'danger', 4000)
+                return
+            }
+        }
+
         try {
+            this._submitting = true
             await this.http.post('/usuarios', dados)
-            this.mostrarMensagemCriar('Usuário criado com sucesso!', 'success')
+            this.modalService.showMessage('modalCriarUsuarioMensagem', 'Usuário criado com sucesso!', 'success', 1500)
             setTimeout(() => {
-                this.modalCriar.hide()
+                if (this._modalCriar) this._modalCriar.hide()
                 this.limparFormCriar()
-                if (typeof onSuccess === 'function') {
-                    onSuccess()
-                }
+                this._submitting = false
+                if (callbacks.onSuccess) callbacks.onSuccess()
+                this.currentCallback = ModalService.normalizeCallbacks()
             }, 1500)
         } catch (erro) {
-            this.mostrarMensagemCriar(erro.message || 'Erro ao criar usuário.', 'danger')
+            this._submitting = false
+            let mensagemErro = erro.message || 'Erro ao criar usuário.'
+
+            // Tratar erros específicos de duplicação
+            if (mensagemErro.includes('Duplicate entry') || mensagemErro.includes('ER_DUP_ENTRY') || mensagemErro.includes('já está cadastrado')) {
+                if (mensagemErro.includes('email')) {
+                    mensagemErro = 'Este email já está cadastrado no sistema.'
+                    this.mostrarErroCampo('emailCriar', mensagemErro)
+                } else if (mensagemErro.includes('cpf') || mensagemErro.includes('CPF')) {
+                    mensagemErro = 'Este CPF já está cadastrado no sistema.'
+                    this.mostrarErroCampo('cpfCriar', mensagemErro)
+                } else {
+                    mensagemErro = 'Já existe um registro com estas informações.'
+                }
+            }
+
+            this.modalService.showMessage('modalCriarUsuarioMensagem', mensagemErro, 'danger', 4000)
+            if (callbacks.onError) callbacks.onError(mensagemErro)
         }
     }
+
     async salvarEdicao(onSuccess) {
-        const id = document.getElementById('usuarioIdEdit').value
-        const dados = {
-            nome: document.getElementById('nomeEdit').value,
-            email: document.getElementById('emailEdit').value,
-            id_tipo_usuario: document.getElementById('tipoUsuarioEdit').value || null,
-            status: document.getElementById('statusEdit').value,
-            cpf: document.getElementById('cpfEdit').value || null,
-            data_nascimento: this.dateService.parseDataBRParaISO(document.getElementById('dataNascimentoEdit').value) || null,
-            telefone: document.getElementById('telefoneEdit').value || null,
-            cep: document.getElementById('cepEdit').value || null,
-            endereco: document.getElementById('enderecoEdit').value
+        // Prevenir múltiplas submissões
+        if (this._submitting) {
+            return
         }
-        if (dados.cpf) dados.cpf = dados.cpf.replace(/\D/g,'')
-        if (dados.telefone) dados.telefone = dados.telefone.replace(/\D/g,'')
-        if (dados.cep) dados.cep = dados.cep.replace(/\D/g,'')
-        const senha = document.getElementById('senhaEdit').value
+
+        const getVal = (id) => {
+            const el = document.getElementById(id)
+            return el ? el.value : ''
+        }
+
+        const id = getVal('usuarioIdEdit')
+        const dados = {
+            nome: getVal('nomeEdit'),
+            email: getVal('emailEdit'),
+            id_tipo_usuario: getVal('tipoUsuarioEdit') || null,
+            status: getVal('statusEdit'),
+            cpf: getVal('cpfEdit') || null,
+            data_nascimento: this.dateService.parseDataBRParaISO(getVal('dataNascimentoEdit')) || null,
+            telefone: getVal('telefoneEdit') || null,
+            cep: getVal('cepEdit') || null,
+            endereco: getVal('enderecoEdit')
+        }
+        // Limpar formatação e converter strings vazias em null
+        if (dados.cpf) {
+            dados.cpf = dados.cpf.replace(/\D/g, '')
+            if (!dados.cpf) dados.cpf = null
+        }
+        if (dados.telefone) {
+            dados.telefone = dados.telefone.replace(/\D/g, '')
+            if (!dados.telefone) dados.telefone = null
+        }
+        if (dados.cep) {
+            dados.cep = dados.cep.replace(/\D/g, '')
+            if (!dados.cep) dados.cep = null
+        }
+        const senha = getVal('senhaEdit')
         if (senha) dados.senha = senha
         const usuarioLogado = JSON.parse(localStorage.getItem('usuario'))
         const estaInativandoProprioUsuario = usuarioLogado && usuarioLogado.id === parseInt(id) && dados.status.toLowerCase() === 'inativo'
         if (estaInativandoProprioUsuario) {
-            if (!confirm('Você está inativando sua própria conta. Será deslogado automaticamente. Confirma?')) {
-                return
-            }
+            if (!confirm('Você está inativando sua própria conta. Será deslogado automaticamente. Confirma?')) return
         }
         this.limparErrosEditar()
         this.limparMensagemEditar()
         let invalido = false
-        if (!dados.nome || dados.nome.trim().length < 3) { this.mostrarErroCampo('nomeEdit','Nome é obrigatório (mín. 3 caracteres).'); invalido = true }
-        if (!dados.email || !this.validation.validarEmail(dados.email)) { this.mostrarErroCampo('emailEdit','Email é obrigatório e deve ser válido.'); invalido = true }
-        if (!dados.id_tipo_usuario) { this.mostrarErroCampo('tipoUsuarioEdit','Tipo de usuário é obrigatório.'); invalido = true }
-        if (!dados.status) { this.mostrarErroCampo('statusEdit','Status é obrigatório.'); invalido = true }
-        if (!dados.endereco || dados.endereco.trim().length < 3) { this.mostrarErroCampo('enderecoEdit','Endereço é obrigatório.'); invalido = true }
-        if (dados.cpf && !this.validation.validarCPF(dados.cpf)) { this.mostrarErroCampo('cpfEdit','CPF inválido.'); invalido = true }
-        if (dados.telefone && !this.validation.validarTelefone(dados.telefone)) { this.mostrarErroCampo('telefoneEdit','Telefone inválido.'); invalido = true }
-        if (dados.cep && !this.validation.validarCEP(dados.cep)) { this.mostrarErroCampo('cepEdit','CEP inválido.'); invalido = true }
-        if (senha && senha.length < 6) { this.mostrarErroCampo('senhaEdit','Senha deve ter ao menos 6 caracteres.'); invalido = true }
+        if (!dados.nome || dados.nome.trim().length < 3) { this.mostrarErroCampo('nomeEdit', 'Nome é obrigatório (mín. 3 caracteres).'); invalido = true }
+        if (!dados.email || !this.validation.validarEmail(dados.email)) { this.mostrarErroCampo('emailEdit', 'Email é obrigatório e deve ser válido.'); invalido = true }
+        if (!dados.id_tipo_usuario) { this.mostrarErroCampo('tipoUsuarioEdit', 'Tipo de usuário é obrigatório.'); invalido = true }
+        if (!dados.status) { this.mostrarErroCampo('statusEdit', 'Status é obrigatório.'); invalido = true }
+        if (!dados.endereco || dados.endereco.trim().length < 3) { this.mostrarErroCampo('enderecoEdit', 'Endereço é obrigatório.'); invalido = true }
+        if (dados.cpf && !this.validation.validarCPF(dados.cpf)) { this.mostrarErroCampo('cpfEdit', 'CPF inválido.'); invalido = true }
+        if (dados.telefone && !this.validation.validarTelefone(dados.telefone)) { this.mostrarErroCampo('telefoneEdit', 'Telefone inválido.'); invalido = true }
+        if (dados.cep && !this.validation.validarCEP(dados.cep)) { this.mostrarErroCampo('cepEdit', 'CEP inválido.'); invalido = true }
+        if (senha && senha.length < 6) { this.mostrarErroCampo('senhaEdit', 'Senha deve ter ao menos 6 caracteres.'); invalido = true }
         if (invalido) {
-            this.mostrarMensagemEditar('Corrija os erros antes de salvar.', 'danger')
+            this.modalService.showMessage('modalEditarUsuarioMensagem', 'Corrija os erros antes de salvar.', 'danger', 4000)
             return
         }
+
+        // Verificar duplicação de email e CPF antes de enviar (excluindo o próprio usuário)
+        if (dados.email) {
+            const emailDuplicado = await this.verificarEmailDuplicado(dados.email, id)
+            if (emailDuplicado) {
+                this.mostrarErroCampo('emailEdit', 'Este email já está cadastrado no sistema.')
+                this.modalService.showMessage('modalEditarUsuarioMensagem', 'Este email já está cadastrado no sistema.', 'danger', 4000)
+                return
+            }
+        }
+
+        if (dados.cpf) {
+            const cpfDuplicado = await this.verificarCPFDuplicado(dados.cpf, id)
+            if (cpfDuplicado) {
+                this.mostrarErroCampo('cpfEdit', 'Este CPF já está cadastrado no sistema.')
+                this.modalService.showMessage('modalEditarUsuarioMensagem', 'Este CPF já está cadastrado no sistema.', 'danger', 4000)
+                return
+            }
+        }
+
         try {
+            this._submitting = true
             await this.http.put(`/usuarios/${id}`, dados)
-            this.mostrarMensagemEditar('Usuário atualizado com sucesso!', 'success')
-            if (estaInativandoProprioUsuario) {
-                setTimeout(() => {
-                    this.modalEditar.hide()
-                    const callback = onSuccess || this.currentCallback
-                    if (typeof callback === 'function') {
-                        callback()
-                    }
-                    this.currentCallback = null
+            this.modalService.showMessage('modalEditarUsuarioMensagem', 'Usuário atualizado com sucesso!', 'success', 1500)
+            setTimeout(() => {
+                if (this._modalEditar) this._modalEditar.hide()
+                const callback = onSuccess || this.currentCallback
+                this._submitting = false
+                if (typeof callback === 'function') callback()
+                this.currentCallback = null
+                if (estaInativandoProprioUsuario) {
                     localStorage.removeItem('token')
                     localStorage.removeItem('usuario')
                     window.location.href = '../index.html'
-                }, 1500)
-            } else {
-                setTimeout(() => {
-                    this.modalEditar.hide()
-                    const callback = onSuccess || this.currentCallback
-                    if (typeof callback === 'function') {
-                        callback()
-                    }
-                    this.currentCallback = null
-                }, 1500)
-            }
+                }
+            }, 1500)
         } catch (erro) {
-            this.mostrarMensagemEditar(erro.message || 'Erro ao atualizar usuário.', 'danger')
+            this._submitting = false
+            let mensagemErro = erro.message || 'Erro ao atualizar usuário.'
+
+            // Tratar erros específicos de duplicação
+            if (mensagemErro.includes('Duplicate entry') || mensagemErro.includes('ER_DUP_ENTRY')) {
+                if (mensagemErro.includes('email')) {
+                    mensagemErro = 'Este email já está cadastrado no sistema.'
+                    this.mostrarErroCampo('emailEdit', mensagemErro)
+                } else if (mensagemErro.includes('cpf')) {
+                    mensagemErro = 'Este CPF já está cadastrado no sistema.'
+                    this.mostrarErroCampo('cpfEdit', mensagemErro)
+                } else {
+                    mensagemErro = 'Já existe um registro com estas informações.'
+                }
+            }
+
+            this.modalService.showMessage('modalEditarUsuarioMensagem', mensagemErro, 'danger', 4000)
         }
     }
+
     limparFormCriar() {
-        document.getElementById('formCriarUsuario').reset()
+        const form = document.getElementById('formCriarUsuario')
+        if (form) form.reset()
         this.limparMensagemCriar()
+        this.limparErrosCriar()
     }
-    limparMensagemCriar() {
-        const msgEl = document.getElementById('modalCriarUsuarioMensagem')
-        if (msgEl) {
-            msgEl.className = 'alert d-none'
-            msgEl.textContent = ''
-        }
-    }
-    limparMensagemEditar() {
-        const msgEl = document.getElementById('modalEditarUsuarioMensagem')
-        if (msgEl) {
-            msgEl.className = 'alert d-none'
-            msgEl.textContent = ''
-        }
-    }
-    mostrarMensagemCriar(texto, tipo = 'success') {
-        const msgEl = document.getElementById('modalCriarUsuarioMensagem')
-        if (!msgEl) return
-        msgEl.className = `alert alert-${tipo}`
-        msgEl.textContent = texto
-        setTimeout(() => this.limparMensagemCriar(), 4000)
-    }
-    mostrarMensagemEditar(texto, tipo = 'success') {
-        const msgEl = document.getElementById('modalEditarUsuarioMensagem')
-        if (!msgEl) return
-        msgEl.className = `alert alert-${tipo}`
-        msgEl.textContent = texto
-        setTimeout(() => this.limparMensagemEditar(), 4000)
-    }
+
+    limparMensagemCriar() { this.modalService.clearMessage('modalCriarUsuarioMensagem') }
+    limparMensagemEditar() { this.modalService.clearMessage('modalEditarUsuarioMensagem') }
+
     limparErrosCriar() {
-        const campos = ['nomeCriar','emailCriar','tipoUsuarioCriar','statusCriar','cpfCriar','dataNascimentoCriar','telefoneCriar','cepCriar','enderecoCriar','senhaCriar']
+        const campos = ['nomeCriar', 'emailCriar', 'tipoUsuarioCriar', 'statusCriar', 'cpfCriar', 'dataNascimentoCriar', 'telefoneCriar', 'cepCriar', 'enderecoCriar', 'senhaCriar']
         campos.forEach(id => {
             const el = document.getElementById(id)
             if (!el) return
             el.classList.remove('is-invalid')
-            const feedback = el.parentElement && el.parentElement.querySelector('.invalid-feedback')
+            if (!el.parentElement) return
+            const feedback = el.parentElement.querySelector('.invalid-feedback')
             if (feedback) feedback.remove()
         })
     }
+
     limparErrosEditar() {
-        const campos = ['nomeEdit','emailEdit','tipoUsuarioEdit','statusEdit','cpfEdit','dataNascimentoEdit','telefoneEdit','cepEdit','enderecoEdit','senhaEdit']
+        const campos = ['nomeEdit', 'emailEdit', 'tipoUsuarioEdit', 'statusEdit', 'cpfEdit', 'dataNascimentoEdit', 'telefoneEdit', 'cepEdit', 'enderecoEdit', 'senhaEdit']
         campos.forEach(id => {
             const el = document.getElementById(id)
             if (!el) return
             el.classList.remove('is-invalid')
-            const feedback = el.parentElement && el.parentElement.querySelector('.invalid-feedback')
+            if (!el.parentElement) return
+            const feedback = el.parentElement.querySelector('.invalid-feedback')
             if (feedback) feedback.remove()
         })
     }
+
     mostrarErroCampo(idCampo, mensagem) {
         const el = document.getElementById(idCampo)
         if (!el) return
@@ -257,12 +427,11 @@
         const feedback = document.createElement('div')
         feedback.className = 'invalid-feedback'
         feedback.textContent = mensagem
-        if (el.parentElement) {
-            el.parentElement.appendChild(feedback)
-        }
+        if (el.parentElement) el.parentElement.appendChild(feedback)
     }
+
     vincularListenersCriar() {
-        const ids = ['nomeCriar','emailCriar','tipoUsuarioCriar','statusCriar','cpfCriar','dataNascimentoCriar','telefoneCriar','cepCriar','enderecoCriar','senhaCriar']
+        const ids = ['nomeCriar', 'emailCriar', 'tipoUsuarioCriar', 'statusCriar', 'cpfCriar', 'dataNascimentoCriar', 'telefoneCriar', 'cepCriar', 'enderecoCriar', 'senhaCriar']
         ids.forEach(id => {
             const el = document.getElementById(id)
             if (!el) return
@@ -272,7 +441,7 @@
                 if (fb) fb.remove()
             })
         })
-        
+
         const cpf = document.getElementById('cpfCriar')
         if (cpf) {
             cpf.addEventListener('input', (e) => {
@@ -285,7 +454,7 @@
                 }
             })
         }
-        
+
         const tel = document.getElementById('telefoneCriar')
         if (tel) {
             tel.addEventListener('input', (e) => {
@@ -304,7 +473,7 @@
                 }
             })
         }
-        
+
         const cep = document.getElementById('cepCriar')
         if (cep) {
             cep.addEventListener('input', (e) => {
@@ -315,7 +484,7 @@
                 }
             })
         }
-        
+
         const data = document.getElementById('dataNascimentoCriar')
         if (data) {
             data.addEventListener('input', (e) => {
@@ -330,9 +499,13 @@
                 }
             })
         }
+
+        const btnCriar = document.getElementById('btnCriarUsuario')
+        if (btnCriar) btnCriar.addEventListener('click', () => this.criar())
     }
+
     vincularListenersEditar() {
-        const ids = ['nomeEdit','emailEdit','tipoUsuarioEdit','statusEdit','cpfEdit','dataNascimentoEdit','telefoneEdit','cepEdit','enderecoEdit','senhaEdit']
+        const ids = ['nomeEdit', 'emailEdit', 'tipoUsuarioEdit', 'statusEdit', 'cpfEdit', 'dataNascimentoEdit', 'telefoneEdit', 'cepEdit', 'enderecoEdit', 'senhaEdit']
         ids.forEach(id => {
             const el = document.getElementById(id)
             if (!el) return
@@ -342,7 +515,7 @@
                 if (fb) fb.remove()
             })
         })
-        
+
         const cpf = document.getElementById('cpfEdit')
         if (cpf) {
             cpf.addEventListener('input', (e) => {
@@ -355,7 +528,7 @@
                 }
             })
         }
-        
+
         const tel = document.getElementById('telefoneEdit')
         if (tel) {
             tel.addEventListener('input', (e) => {
@@ -374,7 +547,7 @@
                 }
             })
         }
-        
+
         const cep = document.getElementById('cepEdit')
         if (cep) {
             cep.addEventListener('input', (e) => {
@@ -385,7 +558,7 @@
                 }
             })
         }
-        
+
         const data = document.getElementById('dataNascimentoEdit')
         if (data) {
             data.addEventListener('input', (e) => {
@@ -400,6 +573,10 @@
                 }
             })
         }
+
+        const btnSalvar = document.getElementById('btnSalvarUsuario')
+        if (btnSalvar) btnSalvar.addEventListener('click', () => this.salvarEdicao())
     }
 }
+
 window.ModalUsuario = ModalUsuario

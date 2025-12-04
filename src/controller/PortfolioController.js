@@ -70,4 +70,16 @@ export class PortfolioController {
             next(error)
         }
     }
+
+    static async deletarPermanente(req, res, next) {
+        try {
+            const { id } = req.params
+            const existe = await conexao("portfolio").where({ id }).first()
+            if (!existe) throw createError(404, "Portfólio não encontrado!")
+            await conexao("portfolio").where({ id }).del()
+            res.json({ message: "Portfólio excluído com sucesso!" })
+        } catch (error) {
+            next(error)
+        }
+    }
 }

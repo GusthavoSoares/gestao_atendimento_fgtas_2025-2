@@ -20,7 +20,8 @@
             await this.carregarSolicitantes()
             BotoesFiltroRender.renderizarBotoes('botoesFiltroContainer')
             this.configurarFiltros()
-            document.getElementById('btnSalvarSolicitante').addEventListener('click', () => this.salvarSolicitante())
+            // Não adicionar listener aqui - será adicionado quando o modal for aberto
+            // document.getElementById('btnSalvarSolicitante').addEventListener('click', () => this.salvarSolicitante())
         } catch (erro) {
             console.error('Erro na inicialização:', erro)
             this.notification.mostrarErro('Erro ao carregar dados: ' + erro.message)
@@ -52,7 +53,7 @@
         this.filtroController.configurarSelect('filtroTipo', 'tipo')
         const btnAplicar = document.getElementById('btnAplicarFiltros')
         if (btnAplicar) btnAplicar.classList.add('d-none')
-        
+
         BotoesFiltroRender.configurarEventos(
             () => this.filtroController.limparFiltros(),
             async () => {
@@ -68,7 +69,7 @@
         let solicitantes = [...this.solicitantes]
         const filtroStatus = filtros ? filtros.status : this.filtroController.obterValorFiltro('status')
         const filtroTipo = filtros ? filtros.tipo : this.filtroController.obterValorFiltro('tipo')
-        
+
         if (filtroStatus && filtroStatus !== 'todos') {
             solicitantes = solicitantes.filter(s => {
                 const status = (s.status || '').trim()
@@ -78,12 +79,34 @@
         if (filtroTipo && filtroTipo !== 'todos') {
             solicitantes = solicitantes.filter(s => s.id_tipo_solicitante == filtroTipo)
         }
-        solicitantes.sort((a,b) => a.id - b.id)
+        solicitantes.sort((a, b) => a.id - b.id)
         this.render.renderizarTabela(
             solicitantes,
             (id) => this.editarSolicitante(id),
-            (id, status) => this.toggleStatus(id, status)
+            (id, status) => this.toggleStatus(id, status),
+            (id) => this.deletarPermanente(id)
         )
+    }
+    async deletarPermanente(id) {
+        if (!PermissaoAdmin.verificarPermissao(false)) {
+            this.notification.mostrarErro('Apenas administradores podem excluir solicitantes permanentemente!')
+            return
+        }
+        if (!confirm('Tem certeza que deseja excluir este solicitante permanentemente? Esta ação não pode ser desfeita.')) return
+        try {
+            const token = localStorage.getItem('token')
+            const resposta = await fetch(`${this.API_BASE_URL}/solicitantes/${id}/deletar`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            if (!resposta.ok) throw new Error('Erro ao excluir solicitante')
+            this.notification.mostrarSucesso('Solicitante excluído com sucesso!')
+            await this.carregarSolicitantes()
+        } catch (erro) {
+            this.notification.mostrarErro(erro.message)
+        }
     }
     async editarSolicitante(id) {
         this.modal.abrirEditar(id, {
@@ -114,16 +137,5 @@
         }
     }
 }
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        const instance = new SolicitanteFrontController()
-        window.solicitanteFrontController = instance
-        window.SolicitantesController = instance
-        window.solicitantesController = instance
-    })
-} else {
-    const instance = new SolicitanteFrontController()
-    window.solicitanteFrontController = instance
-    window.SolicitantesController = instance
-    window.solicitantesController = instance
-}
+// Não auto-instanciar - será instanciado pelo Inicializador
+window.SolicitanteFrontController = SolicitanteFrontController

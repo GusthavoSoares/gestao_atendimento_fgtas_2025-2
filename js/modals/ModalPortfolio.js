@@ -5,17 +5,16 @@
         this.validation = new ValidationService()
         this.tiposSolicitante = []
         this._modal = null
+        this.render = new PortfolioRender()
+        this.modalService = new ModalService()
+        this.currentCallback = { onSuccess: null, onError: null }
         this.carregarTiposSolicitante()
     }
-    get modal() {
-        if (!this._modal) {
-            const element = document.getElementById('modalPortfolio')
-            if (element) {
-                this._modal = new bootstrap.Modal(element)
-            }
-        }
-        return this._modal
+
+    async ensureTemplates() {
+        this.modalService.ensureElement('modalPortfolio', () => this.render.getModalTemplates())
     }
+
     async carregarTiposSolicitante() {
         try {
             this.tiposSolicitante = await this.http.get('/tiposSolicitantes')
@@ -34,37 +33,127 @@
             select.appendChild(option)
         })
     }
-    async abrir() {
-        this.limparFormulario()
-        this.limparErros()
-        this.vincularListeners()
+    async abrir(onSuccess) {
+        this.currentCallback = ModalService.normalizeCallbacks(onSuccess)
+        await this.ensureTemplates()
+        this.preencherSelectTipos()
+
         const portfolioId = document.getElementById('portfolioId')
         const titulo = document.getElementById('modalPortfolioTitulo')
         if (portfolioId) portfolioId.value = ''
         if (titulo) titulo.textContent = 'Novo Portfólio'
-        this.preencherSelectTipos()
-        this.modal.show()
+
+        this.limparErros()
+        this.vincularListeners()
+
+        // Destruir modal anterior se existir
+        if (this._modal) {
+            try {
+                this._modal.hide()
+            } catch (e) {
+                console.log('Modal anterior já estava oculto')
+            }
+            this._modal = null
+        }
+
+        this._modal = this.modalService.createBootstrapModal('modalPortfolio')
+        if (!this._modal) {
+            console.error('Erro: Não foi possível criar o modal')
+            return
+        }
+
+        const btn = document.getElementById('btnSalvarPortfolio')
+        if (btn) {
+            // Remover listeners anteriores
+            const newBtn = btn.cloneNode(true)
+            btn.parentNode.replaceChild(newBtn, btn)
+            newBtn.addEventListener('click', () => this.salvar())
+        }
+
+        // Adicionar listeners para o botão cancelar e fechar (X)
+        const modalElement = this._modal?._element
+        if (modalElement) {
+            const cancelarBtn = modalElement.querySelector('[data-bs-dismiss="modal"]')
+            if (cancelarBtn) {
+                const newCancelar = cancelarBtn.cloneNode(true)
+                cancelarBtn.parentNode.replaceChild(newCancelar, cancelarBtn)
+                newCancelar.addEventListener('click', () => {
+                    this._modal?.hide()
+                    this.limparFormulario()
+                })
+            }
+        }
+
+        this._modal.show()
     }
     async abrirEditar(id, onSuccess) {
         try {
+            this.currentCallback = ModalService.normalizeCallbacks(onSuccess)
+            await this.ensureTemplates()
             this.preencherSelectTipos()
+
             const portfolio = await this.http.get(`/portfolios/${id}`)
+
             document.getElementById('portfolioId').value = portfolio.id
             document.getElementById('nomePortfolio').value = portfolio.nome
             document.getElementById('tipoSolicitantePortfolio').value = portfolio.id_tipo_solicitante
             document.getElementById('statusPortfolio').value = portfolio.status
+
             const titulo = document.getElementById('modalPortfolioTitulo')
             if (titulo) titulo.textContent = 'Editar Portfólio'
+
             this.limparErros()
             this.vincularListeners()
-            this.modal.show()
+
+            // Destruir modal anterior se existir
+            if (this._modal) {
+                try {
+                    this._modal.hide()
+                } catch (e) {
+                    console.log('Modal anterior já estava oculto')
+                }
+                this._modal = null
+            }
+
+            this._modal = this.modalService.createBootstrapModal('modalPortfolio')
+            if (!this._modal) {
+                console.error('Erro: Não foi possível criar o modal de edição')
+                return
+            }
+
+            const btn = document.getElementById('btnSalvarPortfolio')
+            if (btn) {
+                // Remover listeners anteriores
+                const newBtn = btn.cloneNode(true)
+                btn.parentNode.replaceChild(newBtn, btn)
+                newBtn.addEventListener('click', () => this.salvar())
+            }
+
+            // Adicionar listeners para o botão cancelar e fechar (X)
+            const modalElement = this._modal?._element
+            if (modalElement) {
+                const cancelarBtn = modalElement.querySelector('[data-bs-dismiss="modal"]')
+                if (cancelarBtn) {
+                    const newCancelar = cancelarBtn.cloneNode(true)
+                    cancelarBtn.parentNode.replaceChild(newCancelar, cancelarBtn)
+                    newCancelar.addEventListener('click', () => {
+                        this._modal?.hide()
+                        this.limparFormulario()
+                    })
+                }
+            }
+
+            this._modal.show()
         } catch (erro) {
-            if (onSuccess && onSuccess.onError) {
-                onSuccess.onError(erro.message)
+            console.error('Erro ao abrir modal de edição:', erro)
+            const callbacks = ModalService.mergeCallbacks(onSuccess, this.currentCallback)
+            if (callbacks.onError) {
+                callbacks.onError(erro.message || 'Erro ao abrir modal de edição.')
             }
         }
     }
     async salvar(onSuccess) {
+        const callbacks = ModalService.mergeCallbacks(onSuccess, this.currentCallback)
         const id = document.getElementById('portfolioId').value
         const dados = {
             nome: document.getElementById('nomePortfolio').value,
@@ -72,7 +161,7 @@
             status: document.getElementById('statusPortfolio').value
         }
         this.limparErros()
-        this.limparMensagem()
+        this.modalService.clearMessage('modalPortfolioMensagem')
         let invalido = false
         if (!dados.nome || dados.nome.trim().length < 3) {
             this.mostrarErroCampo('nome', 'Nome é obrigatório (mín. 3 caracteres).')
@@ -87,7 +176,7 @@
             invalido = true
         }
         if (invalido) {
-            this.mostrarMensagem('Corrija os erros antes de salvar.', 'danger')
+            this.modalService.showMessage('modalPortfolioMensagem', 'Corrija os erros antes de salvar.', 'danger', 4000)
             return
         }
         try {
@@ -96,39 +185,32 @@
             } else {
                 await this.http.post('/portfolios', dados)
             }
-            this.mostrarMensagem(`Portfólio ${id ? 'atualizado' : 'criado'} com sucesso!`, 'success')
+            this.modalService.showMessage('modalPortfolioMensagem', `Portfólio ${id ? 'atualizado' : 'criado'} com sucesso!`, 'success', 1500)
             setTimeout(() => {
-                this.modal.hide()
-                const callback = onSuccess || this.currentCallback
-                if (typeof callback === 'function') {
-                    callback()
+                // Usar instância armazenada do modal
+                if (this._modal) {
+                    this._modal.hide()
                 }
-                this.currentCallback = null
+                this.limparFormulario()
+                if (callbacks.onSuccess) {
+                    callbacks.onSuccess()
+                }
+                this.currentCallback = ModalService.normalizeCallbacks()
             }, 1500)
         } catch (erro) {
-            this.mostrarMensagem(erro.message || 'Erro ao salvar portfólio.', 'danger')
+            this.modalService.showMessage('modalPortfolioMensagem', erro.message || 'Erro ao salvar portfólio.', 'danger', 4000)
+            if (callbacks.onError) {
+                callbacks.onError(erro.message || 'Erro ao salvar portfólio.')
+            }
         }
     }
     limparFormulario() {
-        document.getElementById('formPortfolio').reset()
-        this.limparMensagem()
-    }
-    limparMensagem() {
-        const msgEl = document.getElementById('modalPortfolioMensagem')
-        if (msgEl) {
-            msgEl.className = 'alert d-none'
-            msgEl.textContent = ''
-        }
-    }
-    mostrarMensagem(texto, tipo = 'success') {
-        const msgEl = document.getElementById('modalPortfolioMensagem')
-        if (!msgEl) return
-        msgEl.className = `alert alert-${tipo}`
-        msgEl.textContent = texto
-        setTimeout(() => this.limparMensagem(), 4000)
+        const form = document.getElementById('formPortfolio')
+        if (form) form.reset()
+        this.modalService.clearMessage('modalPortfolioMensagem')
     }
     limparErros() {
-        const campos = ['nomePortfolio','tipoSolicitantePortfolio','statusPortfolio']
+        const campos = ['nomePortfolio', 'tipoSolicitantePortfolio', 'statusPortfolio']
         campos.forEach(id => {
             const el = document.getElementById(id)
             if (!el) return
@@ -149,7 +231,7 @@
         }
     }
     vincularListeners() {
-        ['nomePortfolio','tipoSolicitantePortfolio','statusPortfolio'].forEach(id => {
+        ['nomePortfolio', 'tipoSolicitantePortfolio', 'statusPortfolio'].forEach(id => {
             const el = document.getElementById(id)
             if (!el) return
             const evt = id === 'tipoSolicitantePortfolio' || id === 'statusPortfolio' ? 'change' : 'input'

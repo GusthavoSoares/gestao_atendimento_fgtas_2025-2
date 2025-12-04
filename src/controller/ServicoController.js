@@ -25,6 +25,7 @@ export class ServicoController {
             const dados = await conexao("servico")
                 .select(
                     "servico.id",
+                    "servico.id_portfolio AS id_portfolio",
                     "p.nome AS portfolio",
                     "servico.nome",
                     "servico.status"
@@ -67,6 +68,18 @@ export class ServicoController {
                 .where({ id })
                 .update({ status: "Inativo" })
             res.json({ message: "Serviço desativado com sucesso!" })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async deletarPermanente(req, res, next) {
+        try {
+            const { id } = req.params
+            const existe = await conexao("servico").where({ id }).first()
+            if (!existe) throw createError(404, "Serviço não encontrado!")
+            await conexao("servico").where({ id }).del()
+            res.json({ message: "Serviço excluído com sucesso!" })
         } catch (error) {
             next(error)
         }

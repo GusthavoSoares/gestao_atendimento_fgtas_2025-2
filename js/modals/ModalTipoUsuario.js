@@ -2,52 +2,136 @@
     constructor(apiBaseUrl, httpService) {
         this.API_BASE_URL = apiBaseUrl
         this.http = httpService
-        this.editandoId = null
         this._modal = null
+        this.render = new TipoUsuarioRender()
+        this.modalService = new ModalService()
+        this.currentCallback = { onSuccess: null, onError: null }
+        this.init()
     }
-    get modal() {
-        if (!this._modal) {
-            const element = document.getElementById('modalTipoUsuario')
-            if (element) {
-                this._modal = new bootstrap.Modal(element, { keyboard: true })
-            }
+
+    async init() {
+        await this.ensureTemplates()
+        this.setupModalEvents()
+    }
+
+    async ensureTemplates() {
+        this.modalService.ensureElement('modalTipoUsuario', () => this.render.getModalTemplates())
+    }
+
+    setupModalEvents() {
+        const modalEl = document.getElementById('modalTipoUsuario')
+        if (modalEl) {
+            if (modalEl.dataset.listenersAttached) return
+
+            modalEl.addEventListener('hidden.bs.modal', () => {
+                this.limparFormulario()
+            })
+
+            modalEl.dataset.listenersAttached = 'true'
         }
-        return this._modal
     }
-    abrir() {
-        this.editandoId = null
-        document.getElementById('modalTipoUsuarioTitulo').textContent = 'Novo Tipo de Usuário'
-        document.getElementById('formTipoUsuario').reset()
-        document.getElementById('tipoUsuarioId').value = ''
+
+    limparFormulario() {
+        const form = document.getElementById('formTipoUsuario')
+        if (form) {
+            form.reset()
+            const idEl = document.getElementById('tipoUsuarioId')
+            if (idEl) idEl.value = ''
+        }
+        this.limparErros()
+    }
+
+    limparErros() {
+        const campo = document.getElementById('formTipoUsuario')
+        if (campo) {
+            campo.querySelectorAll('.invalid-feedback').forEach(el => el.style.display = 'none')
+            campo.querySelectorAll('input, select, textarea').forEach(el => el.classList.remove('is-invalid'))
+        }
+    }
+
+    async abrir(onSuccess) {
+        this.currentCallback = ModalService.normalizeCallbacks(onSuccess)
+        await this.ensureTemplates()
+
+        const tituloEl = document.getElementById('modalTipoUsuarioTitulo')
+        if (tituloEl) tituloEl.textContent = 'Novo Tipo de Usuário'
+
+        this.limparFormulario()
+
         const statusEl = document.getElementById('statusTipoUsuario')
         if (statusEl) {
             statusEl.value = 'Ativo'
             statusEl.setAttribute('disabled', 'disabled')
         }
-        this.modal.show()
+
+        if (this._modal) {
+            try { this._modal.hide() } catch (e) { }
+            this._modal = null
+        }
+
+        this._modal = this.modalService.createBootstrapModal('modalTipoUsuario')
+        if (!this._modal) return
+
+        const btn = document.getElementById('btnSalvarTipoUsuario')
+        if (btn) {
+            const newBtn = btn.cloneNode(true)
+            btn.parentNode.replaceChild(newBtn, btn)
+            newBtn.addEventListener('click', () => this.salvar())
+        }
+
+        this._modal.show()
     }
-    async abrirEditar(id, callback) {
+
+    async abrirEditar(id, onSuccess) {
         try {
+            this.currentCallback = ModalService.normalizeCallbacks(onSuccess)
+            await this.ensureTemplates()
+
             const tipo = await this.http.get(`/tiposUsuarios/${id}`)
-            this.editandoId = id
-            document.getElementById('modalTipoUsuarioTitulo').textContent = 'Editar Tipo de Usuário'
-            document.getElementById('tipoUsuarioId').value = id
-            document.getElementById('tipoTipoUsuario').value = tipo.tipo
-            document.getElementById('statusTipoUsuario').value = tipo.status
+
+            const tituloEl = document.getElementById('modalTipoUsuarioTitulo')
+            if (tituloEl) tituloEl.textContent = 'Editar Tipo de Usuário'
+
+            const idEl = document.getElementById('tipoUsuarioId')
+            if (idEl) idEl.value = id
+
+            const tipoEl = document.getElementById('tipoTipoUsuario')
+            if (tipoEl) tipoEl.value = tipo.tipo
+
             const statusEl = document.getElementById('statusTipoUsuario')
             if (statusEl) {
+                statusEl.value = tipo.status
                 statusEl.removeAttribute('disabled')
             }
-            this.modal.show()
-            if (callback?.onSuccess) callback.onSuccess()
+
+            if (this._modal) {
+                try { this._modal.hide() } catch (e) { }
+                this._modal = null
+            }
+
+            this._modal = this.modalService.createBootstrapModal('modalTipoUsuario')
+            if (!this._modal) return
+
+            const btn = document.getElementById('btnSalvarTipoUsuario')
+            if (btn) {
+                const newBtn = btn.cloneNode(true)
+                btn.parentNode.replaceChild(newBtn, btn)
+                newBtn.addEventListener('click', () => this.salvar())
+            }
+
+            this._modal.show()
         } catch (erro) {
-            if (callback?.onError) {
-                callback.onError(erro)
+            console.error('Erro ao abrir modal de edição:', erro)
+            const callbacks = ModalService.mergeCallbacks(onSuccess, this.currentCallback)
+            if (callbacks.onError) {
+                callbacks.onError(erro.message || 'Erro ao abrir modal de edição.')
             }
         }
     }
-    async salvar(callback) {
-        const id = this.editandoId
+
+    async salvar(onSuccess) {
+        const callbacks = ModalService.mergeCallbacks(onSuccess, this.currentCallback)
+        const id = document.getElementById('tipoUsuarioId').value
         const dados = {
             tipo: document.getElementById('tipoTipoUsuario').value,
             status: id ? document.getElementById('statusTipoUsuario').value : 'Ativo'
@@ -58,21 +142,40 @@
             } else {
                 await this.http.post('/tiposUsuarios', dados)
             }
-            this.modal.hide()
-            const finalCallback = callback || this.currentCallback
-            if (finalCallback) {
-                if (typeof finalCallback === 'function') {
-                    finalCallback()
-                } else if (finalCallback.onSuccess) {
-                    finalCallback.onSuccess()
+            this.modalService.showMessage('modalTipoUsuarioMensagem', `Tipo de usuário ${id ? 'atualizado' : 'criado'} com sucesso!`, 'success', 1500)
+            setTimeout(() => {
+                if (this._modal) {
+                    this._modal.hide()
                 }
-            }
-            this.currentCallback = null
+                const form = document.getElementById('formTipoUsuario')
+                if (form) form.reset()
+                if (callbacks.onSuccess) {
+                    callbacks.onSuccess()
+                }
+                this.currentCallback = ModalService.normalizeCallbacks()
+            }, 1500)
         } catch (erro) {
-            if (callback?.onError) {
-                callback.onError(erro)
+            this.modalService.showMessage('modalTipoUsuarioMensagem', erro.message || 'Erro ao salvar tipo de usuário.', 'danger', 4000)
+            if (callbacks.onError) {
+                callbacks.onError(erro.message || 'Erro ao salvar tipo de usuário.')
             }
         }
     }
+
+    _ensureMessageContainer() {
+        const id = 'modalTipoUsuarioMensagem'
+        let el = document.getElementById(id)
+        if (!el) {
+            const modalEl = document.getElementById('modalTipoUsuario')
+            if (!modalEl) return
+            const body = modalEl.querySelector('.modal-body')
+            if (!body) return
+            el = document.createElement('div')
+            el.id = id
+            el.className = 'alert d-none'
+            body.insertBefore(el, body.firstChild)
+        }
+    }
 }
+
 window.ModalTipoUsuario = ModalTipoUsuario

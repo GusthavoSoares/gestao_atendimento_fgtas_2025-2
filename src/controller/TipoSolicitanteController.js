@@ -58,4 +58,16 @@ export class TipoSolicitanteController {
             next(error)
         }
     }
+
+    static async deletarPermanente(req, res, next) {
+        try {
+            const { id } = req.params
+            const existe = await conexao('tipo_solicitante').where({ id }).first()
+            if (!existe) throw createError(404, 'Tipo solicitante não encontrado!')
+            await conexao('tipo_solicitante').where({ id }).del()
+            res.json({ message: 'Tipo de solicitante excluído com sucesso!' })
+        } catch (error) {
+            next(error)
+        }
+    }
 }

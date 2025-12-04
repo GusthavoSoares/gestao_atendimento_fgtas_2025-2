@@ -38,6 +38,25 @@ export class UsuarioController {
             if (!usuario.validarCPF()) {
                 throw createError(400, "CPF inválido!")
             }
+
+            // Verificar duplicação de email
+            const emailExistente = await conexao('usuario')
+                .where({ email })
+                .first()
+            if (emailExistente) {
+                throw createError(409, "Este email já está cadastrado no sistema.")
+            }
+
+            // Verificar duplicação de CPF (se fornecido)
+            if (cpf) {
+                const cpfExistente = await conexao('usuario')
+                    .where({ cpf })
+                    .first()
+                if (cpfExistente) {
+                    throw createError(409, "Este CPF já está cadastrado no sistema.")
+                }
+            }
+
             const senhaHash = await bcrypt.hash(senha, 10)
             usuario.senha = senhaHash
             const [id] = await conexao('usuario').insert(usuario.toJSON())
@@ -132,6 +151,29 @@ export class UsuarioController {
                 }
                 req.body.senha = await bcrypt.hash(req.body.senha, 10)
             }
+
+            // Verificar duplicação de email (excluindo o próprio usuário)
+            if (req.body.email) {
+                const emailExistente = await conexao('usuario')
+                    .where({ email: req.body.email })
+                    .whereNot({ id })
+                    .first()
+                if (emailExistente) {
+                    throw createError(409, "Este email já está cadastrado no sistema.")
+                }
+            }
+
+            // Verificar duplicação de CPF (excluindo o próprio usuário)
+            if (req.body.cpf) {
+                const cpfExistente = await conexao('usuario')
+                    .where({ cpf: req.body.cpf })
+                    .whereNot({ id })
+                    .first()
+                if (cpfExistente) {
+                    throw createError(409, "Este CPF já está cadastrado no sistema.")
+                }
+            }
+
             await conexao('usuario').where({ id }).update(req.body)
             res.json({ message: 'Usuário atualizado com sucesso!' })
         } catch (error) {
@@ -147,6 +189,17 @@ export class UsuarioController {
             res.json({ message: 'Usuário desativado com sucesso!' })
         } catch (error) { next(error) }
     }
+
+    static async deletarPermanente(req, res, next) {
+        try {
+            const { id } = req.params
+            const existe = await conexao('usuario').where({ id }).first()
+            if (!existe) throw createError(404, 'Usuário não encontrado')
+            await conexao('usuario').where({ id }).del()
+            res.json({ message: 'Usuário excluído com sucesso!' })
+        } catch (error) { next(error) }
+    }
+
     static async login(req, res, next) {
         try {
             const { email, senha } = req.body

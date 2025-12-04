@@ -16,20 +16,16 @@ const __dirname = path.dirname(__filename)
 const PORTA = 8001
 const HOSTNAME = 'localhost'
 const app = express()
-app.use(cors({
-    origin: ['http:
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// Uso simples e seguro do CORS: permitir origens durante desenvolvimento
+app.use(cors())
+// Cabeçalhos adicionais e tratamento de preflight
 app.use((req, res, next) => {
-    if (req.method === 'OPTIONS') {
-        res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
-        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-        return res.sendStatus(204);
-    }
-    next();
-});
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    if (req.method === 'OPTIONS') return res.sendStatus(204)
+    next()
+})
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/uploads', express.static(path.join(__dirname, 'files')))
@@ -50,5 +46,5 @@ app.use((erro, req, res, next) => {
     res.status(erro.status || 500).json({ erro: erro.message || "Erro no servidor" })
 })
 app.listen(PORTA, () => {
-    console.log(`API rodando em http:
+    console.log(`API rodando em http://${HOSTNAME}:${PORTA}`)
 })

@@ -1,19 +1,23 @@
 ﻿class UsuarioFrontController {
     constructor(modo = 'listar', usuarioId = null) {
-        this.API_BASE_URL = 'http://localhost:8001'
-        this.usuarios = []
-        this.tiposUsuarios = []
-        this.filtroStatus = 'todos'
-        this.filtroTipo = 'todos'
-        this.http = new HttpService(this.API_BASE_URL)
-        this.notification = new NotificationService()
-        this.dateService = new DateService()
-        this.validation = new ValidationService()
-        this.modal = new window.ModalUsuario(this.API_BASE_URL, this.http, this.dateService)
-        this.render = new UsuarioRender(this.dateService)
-        this.filtroRender = new FiltroRender()
-        if (!PermissaoAdmin.verificarPermissao()) return
-        this.inicializarListagem()
+        try {
+            this.API_BASE_URL = 'http://localhost:8001'
+            this.usuarios = []
+            this.tiposUsuarios = []
+            this.filtroStatus = 'todos'
+            this.filtroTipo = 'todos'
+            this.http = new HttpService(this.API_BASE_URL)
+            this.notification = new NotificationService()
+            this.dateService = new DateService()
+            this.validation = new ValidationService()
+            this.modal = new window.ModalUsuario(this.API_BASE_URL, this.http, this.dateService)
+            this.render = new UsuarioRender(this.dateService)
+            this.filtroRender = new FiltroRender()
+            if (!PermissaoAdmin.verificarPermissao()) return
+            this.inicializarListagem()
+        } catch (error) {
+            console.error('Erro ao inicializar UsuarioFrontController:', error)
+        }
     }
     async inicializarListagem() {
         await Promise.all([
@@ -24,16 +28,14 @@
         this.configurarEventos()
         this.popularFiltroTipos()
         await this.modal.carregarTiposUsuarios()
-        const modalCriarEl = document.getElementById('modalCriarUsuario')
-        if (modalCriarEl) {
-            modalCriarEl.addEventListener('show.bs.modal', () => {
-                if (this.modal && typeof this.modal.preencherSelectTipos === 'function') {
-                    this.modal.preencherSelectTipos('tipoUsuarioCriar')
-                }
+
+        // Configurar botão Novo Usuário
+        const btnNovoUsuario = document.getElementById('btnNovoUsuario')
+        if (btnNovoUsuario) {
+            btnNovoUsuario.addEventListener('click', () => {
+                this.modal.abrirCriar(() => this.inicializarListagem())
             })
         }
-        document.getElementById('btnCriarUsuario').addEventListener('click', () => this.criarUsuario())
-        document.getElementById('btnSalvarUsuario').addEventListener('click', () => this.salvarEdicao())
     }
     async carregarUsuarios() {
         try {
@@ -54,11 +56,11 @@
     configurarEventos() {
         const filtroStatus = document.getElementById('filtroStatus')
         const filtroTipo = document.getElementById('filtroTipo')
-        
+
         const renderDebounced = (typeof debounce === 'function')
             ? debounce(() => this.renderizarTabela(), 120)
             : () => this.renderizarTabela()
-        
+
         if (filtroStatus) filtroStatus.addEventListener('change', (e) => {
             this.filtroStatus = e.target.value
             renderDebounced()
@@ -67,13 +69,13 @@
             this.filtroTipo = e.target.value
             renderDebounced()
         })
-        
+
         BotoesFiltroRender.configurarEventos(
             () => this.limparFiltros(),
-            () => this.recarregarDados()
+            async () => await this.recarregarDados()
         )
     }
-    
+
     limparFiltros() {
         this.filtroStatus = 'todos'
         this.filtroTipo = 'todos'
@@ -83,9 +85,9 @@
         if (filtroTipo) filtroTipo.value = 'todos'
         this.renderizarTabela()
     }
-    
+
     async recarregarDados() {
-        await this.carregarDados()
+        await this.carregarUsuarios()
         this.notification.mostrarSucesso('Dados recarregados com sucesso!')
     }
     popularFiltroTipos() {
@@ -113,8 +115,30 @@
         this.render.renderizarTabela(
             ordenados,
             (id) => this.abrirModalEditar(id),
-            (id, status) => this.toggleStatus(id, status)
+            (id, status) => this.toggleStatus(id, status),
+            (id) => this.deletarPermanente(id)
         )
+    }
+    async deletarPermanente(id) {
+        if (!PermissaoAdmin.verificarPermissao(false)) {
+            this.notification.mostrarErro('Apenas administradores podem excluir usuários permanentemente!')
+            return
+        }
+        if (!confirm('Tem certeza que deseja excluir este usuário permanentemente? Esta ação não pode ser desfeita.')) return
+        try {
+            const token = localStorage.getItem('token')
+            const resposta = await fetch(`${this.API_BASE_URL}/usuarios/${id}/deletar`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            if (!resposta.ok) throw new Error('Erro ao excluir usuário')
+            this.notification.mostrarSucesso('Usuário excluído com sucesso!')
+            await this.carregarUsuarios()
+        } catch (erro) {
+            this.notification.mostrarErro(erro.message)
+        }
     }
     async toggleStatus(id, statusAtual) {
         const novoStatus = statusAtual === 'Ativo' ? 'Inativo' : 'Ativo'

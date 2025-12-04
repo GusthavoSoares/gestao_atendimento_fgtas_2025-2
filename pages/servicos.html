@@ -19,7 +19,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2><i class="fas fa-cogs"></i> Gerenciamento de Serviços</h2>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalServico">
+                    <button class="btn btn-primary" id="btnNovoServico">
                         <i class="fas fa-plus"></i> Novo Serviço
                     </button>
                 </div>
@@ -29,8 +29,9 @@
         <div class="row">
             <div class="col-12">
                 <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Serviços Ativos</h5>
+                        <div id="botoesFiltroContainer"></div>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3" id="filtrosContainer">
@@ -48,7 +49,6 @@
                                     <option value="todos">Todos</option>
                                 </select>
                             </div>
-                            <div id="botoesFiltroContainer"></div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
@@ -75,46 +75,7 @@
     </div>
 
 
-    <div class="modal fade" id="modalServico" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="modalServicoTitulo">Novo Serviço</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="modalServicoMensagem" class="alert d-none" role="alert"></div>
-                    <form id="formServico">
-                        <input type="hidden" id="servicoId">
-
-                        <div class="mb-3">
-                            <label for="nomeServico" class="form-label">Nome do Serviço</label>
-                            <input type="text" class="form-control" id="nomeServico" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="portfolioServico" class="form-label">Portfólio</label>
-                            <select class="form-select" id="portfolioServico" required>
-                                <option value="">Selecione...</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="statusServico" class="form-label">Status</label>
-                            <select class="form-select" id="statusServico" required>
-                                <option value="Ativo">Ativo</option>
-                                <option value="Inativo">Inativo</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnSalvarServico">Salvar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="modals-root"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/middleware/UIMiddleware.js"></script>
@@ -128,6 +89,7 @@
     <script src="../js/services/NotificationService.js"></script>
     <script src="../js/services/DateService.js"></script>
     <script src="../js/services/ValidationService.js"></script>
+    <script src="../js/services/ModalService.js"></script>
     <script src="../js/filters/FiltroController.js"></script>
     <script src="../js/renders/FiltroRender.js"></script>
     <script src="../js/renders/BotoesFiltroRender.js"></script>
@@ -135,7 +97,15 @@
     <script src="../js/renders/ServicoRender.js"></script>
     <script src="../js/frontController/ServicoFrontController.js"></script>
     <script>
-        Inicializador.inicializar({ requerAdmin: true })
+        Inicializador.inicializar({
+            requerAdmin: true,
+            callback: () => {
+                const instance = new ServicoFrontController()
+                window.servicoFrontController = instance
+                window.ServicosController = instance
+                window.servicosController = instance
+            }
+        })
     </script>
 </body>
 

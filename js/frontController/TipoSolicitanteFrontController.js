@@ -12,7 +12,7 @@
     }
     async inicializar() {
         await this.carregarTiposSolicitante()
-        
+
         // Aguarda o DOM estar pronto antes de renderizar botões
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
@@ -22,7 +22,7 @@
             this.configurarInterface()
         }
     }
-    
+
     configurarInterface() {
         BotoesFiltroRender.renderizarBotoes('botoesFiltroContainer')
         BotoesFiltroRender.configurarEventos(
@@ -32,7 +32,16 @@
                 this.notification.mostrarSucesso('Dados recarregados com sucesso!')
             }
         )
-        document.getElementById('btnSalvarTipoSolicitante').addEventListener('click', () => this.salvarTipoSolicitante())
+
+        const btnNovo = document.getElementById('btnNovoTipoSolicitante')
+        if (btnNovo) {
+            btnNovo.addEventListener('click', () => {
+                this.modal.abrir(() => this.carregarTiposSolicitante())
+            })
+        }
+
+        // Não adicionar listener aqui - será adicionado quando o modal for aberto
+        // document.getElementById('btnSalvarTipoSolicitante').addEventListener('click', () => this.salvarTipoSolicitante())
         const filtroStatus = document.getElementById('filtroStatusSolicitante')
         if (filtroStatus) {
             const renderDebounced = (typeof debounce === 'function')
@@ -73,8 +82,30 @@
         this.render.renderizarTabela(
             tipos,
             (id) => this.editarTipoSolicitante(id),
-            (id, status) => this.toggleStatusSolicitante(id, status)
+            (id, status) => this.toggleStatusSolicitante(id, status),
+            (id) => this.deletarPermanente(id)
         )
+    }
+    async deletarPermanente(id) {
+        if (!PermissaoAdmin.verificarPermissao(false)) {
+            this.notification.mostrarErro('Apenas administradores podem excluir tipos permanentemente!')
+            return
+        }
+        if (!confirm('Tem certeza que deseja excluir este tipo permanentemente? Esta ação não pode ser desfeita.')) return
+        try {
+            const token = localStorage.getItem('token')
+            const resposta = await fetch(`${this.API_BASE_URL}/tiposSolicitantes/${id}/deletar`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            if (!resposta.ok) throw new Error('Erro ao excluir tipo')
+            this.notification.mostrarSucesso('Tipo excluído com sucesso!')
+            await this.carregarTiposSolicitante()
+        } catch (erro) {
+            this.notification.mostrarErro(erro.message)
+        }
     }
     async editarTipoSolicitante(id) {
         this.modal.abrirEditar(id, {
@@ -101,12 +132,5 @@
         }
     }
 }
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        const instance = new TipoSolicitanteFrontController()
-        window.tipoSolicitanteFrontController = instance
-    })
-} else {
-    const instance = new TipoSolicitanteFrontController()
-    window.tipoSolicitanteFrontController = instance
-}
+// Não auto-instanciar - será instanciado pelo Inicializador
+window.TipoSolicitanteFrontController = TipoSolicitanteFrontController

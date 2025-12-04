@@ -1,6 +1,10 @@
 ﻿class SidebarNavegacao {
     static gerar() {
         const usuario = Auth.obterUsuario()
+        if (!usuario) {
+            console.error('SidebarNavegacao: Usuário não encontrado no localStorage')
+            return '<div class="sidebar" id="sidebar"><div class="sidebar-header"><p>Erro ao carregar menu</p></div></div>'
+        }
         const isAdmin = usuario && (usuario.tipo_usuario === 'Administrador' || usuario.tipo_usuario === 'Admin')
         const menuAdmin = isAdmin ? `
                     <div class="nav-section-title">

@@ -4,6 +4,7 @@
         this.atendimentos = []
         this.filtrados = []
         this.dateService = new DateService()
+        this.notification = new NotificationService()
         this.filtroRender = new FiltroRender()
         this.render = new RelatoriosRender(this.dateService)
         this.inicializar()
@@ -27,6 +28,12 @@
         }
     }
     configurarEventos() {
+        BotoesFiltroRender.renderizarBotoes('botoesFiltroContainer', true)
+        BotoesFiltroRender.configurarEventos(
+            () => this.limparFiltros(),
+            async () => await this.recarregarDados()
+        )
+
         const btnAvancado = document.getElementById('btnFiltroAvancado')
         const btnCSV = document.getElementById('btnExportarCSV')
         const filtroDataInicio = document.getElementById('filtroDataInicio')
@@ -34,9 +41,9 @@
         const filtroStatus = document.getElementById('filtroStatus')
         const maskDate = (el) => {
             el.addEventListener('input', () => {
-                let v = el.value.replace(/\D/g,'').slice(0,8)
-                if (v.length >= 5) el.value = `${v.slice(0,2)}/${v.slice(2,4)}/${v.slice(4)}`
-                else if (v.length >= 3) el.value = `${v.slice(0,2)}/${v.slice(2)}`
+                let v = el.value.replace(/\D/g, '').slice(0, 8)
+                if (v.length >= 5) el.value = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`
+                else if (v.length >= 3) el.value = `${v.slice(0, 2)}/${v.slice(2)}`
                 else el.value = v
             })
         }
@@ -117,7 +124,7 @@
         const diTime = parseISOorBR(di)
         const dfTime = parseISOorBR(df, true)
         this.filtrados = this.atendimentos.filter(a => {
-            const t = new Date(String(a.data_inicio).replace('Z','')).getTime()
+            const t = new Date(String(a.data_inicio).replace('Z', '')).getTime()
             if (diTime && (!t || t < diTime)) return false
             if (dfTime && (!t || t > dfTime)) return false
             if (status !== 'todos' && a.status !== status) return false
@@ -133,10 +140,31 @@
         this.render.renderizarTabelaAnalitica(this.filtrados)
         this.render.renderizarKPIs(this.filtrados)
     }
+    limparFiltros() {
+        const filtroDataInicio = document.getElementById('filtroDataInicio')
+        const filtroDataFim = document.getElementById('filtroDataFim')
+        const filtroStatus = document.getElementById('filtroStatus')
+        const filtroPortfolio = document.getElementById('filtroPortfolio')
+        const filtroServico = document.getElementById('filtroServico')
+        const filtroTipoOcorrencia = document.getElementById('filtroTipoOcorrencia')
+        const filtroSolicitante = document.getElementById('filtroSolicitante')
+
+        if (filtroDataInicio) filtroDataInicio.value = ''
+        if (filtroDataFim) filtroDataFim.value = ''
+        if (filtroStatus) filtroStatus.value = 'todos'
+        if (filtroPortfolio) filtroPortfolio.value = ''
+        if (filtroServico) filtroServico.value = ''
+        if (filtroTipoOcorrencia) filtroTipoOcorrencia.value = ''
+        if (filtroSolicitante) filtroSolicitante.value = ''
+
+        this.aplicarFiltros()
+        this.notification.mostrarSucesso('Filtros limpos com sucesso!')
+    }
     async recarregarDados() {
         await this.carregarAtendimentos()
         this.popularCombos()
         this.aplicarFiltros()
+        this.notification.mostrarSucesso('Dados recarregados com sucesso!')
     }
     exportarCSV() {
         if (!this.filtrados.length) {
@@ -144,7 +172,7 @@
             return
         }
         let csv = 'ID,Solicitante,Data Início,Data Fim,Portfólio,Serviço,Tipo Ocorrência,Status,Descrição\n'
-        const ordenados = [...this.filtrados].sort((a,b)=>a.id-b.id)
+        const ordenados = [...this.filtrados].sort((a, b) => a.id - b.id)
         ordenados.forEach(a => {
             const linha = [
                 a.id,
@@ -155,7 +183,7 @@
                 `"${a.servico || ''}"`,
                 `"${a.tipo_ocorrencia || ''}"`,
                 a.status,
-                `"${(a.descricao || '').replace(/"/g,'""')}"`
+                `"${(a.descricao || '').replace(/"/g, '""')}"`
             ].join(',')
             csv += linha + '\n'
         })

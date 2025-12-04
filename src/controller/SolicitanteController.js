@@ -59,6 +59,18 @@ export class SolicitanteController {
         try {
             const { id } = req.params
             const dado = await conexao("solicitante")
+                .select(
+                    "solicitante.id",
+                    "solicitante.id_tipo_solicitante",
+                    "solicitante.nome",
+                    "solicitante.identificacao",
+                    "solicitante.data_nascimento",
+                    "solicitante.telefone",
+                    "solicitante.cep",
+                    "solicitante.endereco",
+                    "solicitante.email",
+                    "solicitante.status"
+                )
                 .where({ id })
                 .first()
             if (!dado) throw createError(404, "Solicitante não encontrado!")
@@ -105,6 +117,18 @@ export class SolicitanteController {
                 .where({ id })
                 .update({ status: "Inativo" })
             res.json({ message: "Solicitante desativado com sucesso!" })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async deletarPermanente(req, res, next) {
+        try {
+            const { id } = req.params
+            const existe = await conexao("solicitante").where({ id }).first()
+            if (!existe) throw createError(404, "Solicitante não encontrado!")
+            await conexao("solicitante").where({ id }).del()
+            res.json({ message: "Solicitante excluído com sucesso!" })
         } catch (error) {
             next(error)
         }

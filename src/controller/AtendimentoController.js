@@ -26,6 +26,8 @@ export class AtendimentoController {
                     .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase())
                     .join(' ');
             }
+            // Garantir que data_inicio seja uma string ISO quando não informada
+            const dataInicioFinal = data_inicio ? data_inicio : new Date().toISOString()
             const atendimento = new Atendimento(
                 id_solicitante,
                 id_atendente,
@@ -33,7 +35,7 @@ export class AtendimentoController {
                 id_servico,
                 id_tipo_ocorrencia,
                 arquivos_caminho,
-                data_inicio ?? new Date(),
+                dataInicioFinal,
                 data_fim,
                 solucao,
                 descricao,
@@ -117,6 +119,12 @@ export class AtendimentoController {
                     .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase())
                     .join(' ');
             }
+
+            // Se tem data_fim, automaticamente definir como Finalizado
+            if (dadosAtualizados.data_fim && dadosAtualizados.data_fim !== null) {
+                dadosAtualizados.status = 'Finalizado';
+            }
+
             await conexao("atendimento").where({ id }).update(dadosAtualizados);
             res.json({ message: "Atendimento atualizado com sucesso!" });
         } catch (error) {
@@ -132,6 +140,18 @@ export class AtendimentoController {
                 .where({ id })
                 .update({ status: "Finalizado" });
             res.json({ message: "Atendimento finalizado com sucesso!" });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async deletarPermanente(req, res, next) {
+        try {
+            const { id } = req.params;
+            const existe = await conexao("atendimento").where({ id }).first();
+            if (!existe) throw createError(404, "Atendimento não encontrado!");
+            await conexao("atendimento").where({ id }).del();
+            res.json({ message: "Atendimento excluído com sucesso!" });
         } catch (error) {
             next(error);
         }
